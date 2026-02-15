@@ -69,10 +69,6 @@ class CTk(CTK_PARENT_CLASS, CTkAppearanceModeBaseClass, CTkScalingBaseClass):
         # save focus before calling withdraw
         self.focused_widget_before_widthdraw = None
 
-        # set vgkit titlebar icon (Windows only)
-        if sys.platform.startswith("win"):
-            self.after(200, self._windows_set_titlebar_icon)
-
         # set titlebar color (Windows only)
         if sys.platform.startswith("win"):
             self._windows_set_titlebar_color(self._get_appearance_mode())
@@ -222,15 +218,6 @@ class CTk(CTK_PARENT_CLASS, CTkAppearanceModeBaseClass, CTkScalingBaseClass):
     def iconbitmap(self, bitmap=None, default=None):
         self._iconbitmap_method_called = True
         super().wm_iconbitmap(bitmap, default)
-
-    def _windows_set_titlebar_icon(self):
-        try:
-            # if not the user already called iconbitmap method, set icon
-            if not self._iconbitmap_method_called:
-                vgkit_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                self.iconbitmap(os.path.join(vgkit_directory, "assets", "icons", "vgkit_icon_Windows.ico"))
-        except Exception:
-            pass
 
     @classmethod
     def _enable_macos_dark_title_bar(cls):
