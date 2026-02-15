@@ -46,23 +46,28 @@ class CTkButton(CTkBaseClass):
                  command: Union[Callable[[], Any], None] = None,
                  compound: str = "left",
                  anchor: str = "center",
+                 style: str = "primary",
                  **kwargs):
 
         # transfer basic functionality (bg_color, size, appearance_mode, scaling) to CTkBaseClass
         super().__init__(master=master, bg_color=bg_color, width=width, height=height, **kwargs)
 
+        # style
+        self._style: str = style
+        
         # shape
         self._corner_radius: int = ThemeManager.theme["CTkButton"]["corner_radius"] if corner_radius is None else corner_radius
         self._corner_radius = min(self._corner_radius, round(self._current_height / 2))
         self._border_width: int = ThemeManager.theme["CTkButton"]["border_width"] if border_width is None else border_width
         self._border_spacing: int = border_spacing
 
-        # color
-        self._fg_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["fg_color"] if fg_color is None else self._check_color_type(fg_color, transparency=True)
-        self._hover_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["hover_color"] if hover_color is None else self._check_color_type(hover_color)
-        self._border_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["border_color"] if border_color is None else self._check_color_type(border_color)
-        self._text_color: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color"] if text_color is None else self._check_color_type(text_color)
-        self._text_color_disabled: Union[str, Tuple[str, str]] = ThemeManager.theme["CTkButton"]["text_color_disabled"] if text_color_disabled is None else self._check_color_type(text_color_disabled)
+        # color - determine theme key based on style
+        theme_key = self._get_theme_key_for_style()
+        self._fg_color: Union[str, Tuple[str, str]] = ThemeManager.theme[theme_key]["fg_color"] if fg_color is None else self._check_color_type(fg_color, transparency=True)
+        self._hover_color: Union[str, Tuple[str, str]] = ThemeManager.theme[theme_key]["hover_color"] if hover_color is None else self._check_color_type(hover_color)
+        self._border_color: Union[str, Tuple[str, str]] = ThemeManager.theme[theme_key]["border_color"] if border_color is None else self._check_color_type(border_color)
+        self._text_color: Union[str, Tuple[str, str]] = ThemeManager.theme[theme_key]["text_color"] if text_color is None else self._check_color_type(text_color)
+        self._text_color_disabled: Union[str, Tuple[str, str]] = ThemeManager.theme[theme_key]["text_color_disabled"] if text_color_disabled is None else self._check_color_type(text_color_disabled)
 
         # rendering options
         self._background_corner_colors: Union[Tuple[Union[str, Tuple[str, str]]], None] = background_corner_colors  # rendering options for DrawEngine
@@ -104,6 +109,14 @@ class CTkButton(CTkBaseClass):
         self._create_bindings()
         self._set_cursor()
         self._draw()
+
+    def _get_theme_key_for_style(self) -> str:
+        """ Get the theme key based on button style """
+        if self._style == "secondary":
+            # Use CTkSecondaryButton theme if it exists, otherwise fallback to CTkButton
+            if "CTkSecondaryButton" in ThemeManager.theme:
+                return "CTkSecondaryButton"
+        return "CTkButton"
 
     def _create_bindings(self, sequence: Optional[str] = None):
         """ set necessary bindings for functionality of widget, will overwrite other bindings """
@@ -439,6 +452,19 @@ class CTkButton(CTkBaseClass):
             self._create_grid()
             require_redraw = True
 
+        if "style" in kwargs:
+            new_style = kwargs.pop("style")
+            if new_style != self._style:
+                self._style = new_style
+                # Load colors from new theme key
+                theme_key = self._get_theme_key_for_style()
+                self._fg_color = self._check_color_type(ThemeManager.theme[theme_key]["fg_color"], transparency=True)
+                self._hover_color = self._check_color_type(ThemeManager.theme[theme_key]["hover_color"])
+                self._border_color = self._check_color_type(ThemeManager.theme[theme_key]["border_color"])
+                self._text_color = self._check_color_type(ThemeManager.theme[theme_key]["text_color"])
+                self._text_color_disabled = self._check_color_type(ThemeManager.theme[theme_key]["text_color_disabled"])
+                require_redraw = True
+
         super().configure(require_redraw=require_redraw, **kwargs)
 
     def cget(self, attribute_name: str) -> any:
@@ -448,6 +474,8 @@ class CTkButton(CTkBaseClass):
             return self._border_width
         elif attribute_name == "border_spacing":
             return self._border_spacing
+        elif attribute_name == "style":
+            return self._style
 
         elif attribute_name == "fg_color":
             return self._fg_color

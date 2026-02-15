@@ -329,7 +329,7 @@ class CTkSlider(CTkBaseClass):
             self._output_value = self._round_to_step_size(self._from_ + (self._value * (self._to - self._from_)))
             self._value = (self._output_value - self._from_) / (self._to - self._from_)
 
-            self._draw(no_color_updates=False)
+            self._draw(no_color_updates=True)
 
             if self._variable is not None:
                 self._variable_callback_blocked = True
@@ -378,7 +378,7 @@ class CTkSlider(CTkBaseClass):
         self._output_value = self._round_to_step_size(output_value)
         self._value = (self._output_value - self._from_) / (self._to - self._from_)
 
-        self._draw(no_color_updates=False)
+        self._draw(no_color_updates=True)
 
         if self._variable is not None and not from_variable_callback:
             self._variable_callback_blocked = True

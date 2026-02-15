@@ -2,7 +2,7 @@ import tkinter
 import tkinter.messagebox
 import vgkit
 
-vgkit.set_default_color_theme("libadwaita")
+vgkit.set_default_color_theme("blue")
 
 
 class App(vgkit.Window):
@@ -31,7 +31,10 @@ class App(vgkit.Window):
         )
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
         self.sidebar_button_2 = vgkit.Button(
-            self.sidebar_frame, command=self.sidebar_button_event, mode="round"
+            self.sidebar_frame,
+            command=self.sidebar_button_event,
+            mode="round",
+            style="secondary",
         )
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
         self.sidebar_button_3 = vgkit.CTkButton(

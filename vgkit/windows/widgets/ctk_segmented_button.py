@@ -34,6 +34,8 @@ class CTkSegmentedButton(CTkFrame):
                  unselected_hover_color: Optional[Union[str, Tuple[str, str]]] = None,
                  text_color: Optional[Union[str, Tuple[str, str]]] = None,
                  text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
+                 text_color_selected: Optional[Union[str, Tuple[str, str]]] = None,
+                 text_color_unselected: Optional[Union[str, Tuple[str, str]]] = None,
                  background_corner_colors: Union[Tuple[Union[str, Tuple[str, str]]], None] = None,
 
                  font: Optional[Union[tuple, CTkFont]] = None,
@@ -55,6 +57,17 @@ class CTkSegmentedButton(CTkFrame):
 
         self._sb_text_color = ThemeManager.theme["CTkSegmentedButton"]["text_color"] if text_color is None else self._check_color_type(text_color)
         self._sb_text_color_disabled = ThemeManager.theme["CTkSegmentedButton"]["text_color_disabled"] if text_color_disabled is None else self._check_color_type(text_color_disabled)
+        
+        # Check if theme has selected/unselected text colors, otherwise default to text_color
+        if text_color_selected is None:
+            self._sb_text_color_selected = ThemeManager.theme["CTkSegmentedButton"].get("text_color_selected", self._sb_text_color)
+        else:
+            self._sb_text_color_selected = self._check_color_type(text_color_selected)
+            
+        if text_color_unselected is None:
+            self._sb_text_color_unselected = ThemeManager.theme["CTkSegmentedButton"].get("text_color_unselected", self._sb_text_color)
+        else:
+            self._sb_text_color_unselected = self._check_color_type(text_color_unselected)
 
         self._sb_corner_radius = ThemeManager.theme["CTkSegmentedButton"]["corner_radius"] if corner_radius is None else corner_radius
         self._sb_border_width = ThemeManager.theme["CTkSegmentedButton"]["border_width"] if border_width is None else border_width
@@ -139,7 +152,8 @@ class CTkSegmentedButton(CTkFrame):
     def _unselect_button_by_value(self, value: str):
         if value in self._buttons_dict:
             self._buttons_dict[value].configure(fg_color=self._sb_unselected_color,
-                                                hover_color=self._sb_unselected_hover_color)
+                                                hover_color=self._sb_unselected_hover_color,
+                                                text_color=self._sb_text_color_unselected)
 
     def _select_button_by_value(self, value: str):
         if self._current_value is not None and self._current_value != "":
@@ -148,7 +162,8 @@ class CTkSegmentedButton(CTkFrame):
         self._current_value = value
 
         self._buttons_dict[value].configure(fg_color=self._sb_selected_color,
-                                            hover_color=self._sb_selected_hover_color)
+                                            hover_color=self._sb_selected_hover_color,
+                                            text_color=self._sb_text_color_selected)
 
     def _create_button(self, index: int, value: str) -> CTkButton:
         new_button = CTkButton(self,
@@ -159,7 +174,7 @@ class CTkSegmentedButton(CTkFrame):
                                fg_color=self._sb_unselected_color,
                                border_color=self._sb_fg_color,
                                hover_color=self._sb_unselected_hover_color,
-                               text_color=self._sb_text_color,
+                               text_color=self._sb_text_color_unselected,
                                text_color_disabled=self._sb_text_color_disabled,
                                text=value,
                                font=self._font,
@@ -261,6 +276,17 @@ class CTkSegmentedButton(CTkFrame):
             for button in self._buttons_dict.values():
                 button.configure(text_color_disabled=self._sb_text_color_disabled)
 
+        if "text_color_selected" in kwargs:
+            self._sb_text_color_selected = self._check_color_type(kwargs.pop("text_color_selected"))
+            if self._current_value in self._buttons_dict:
+                self._buttons_dict[self._current_value].configure(text_color=self._sb_text_color_selected)
+
+        if "text_color_unselected" in kwargs:
+            self._sb_text_color_unselected = self._check_color_type(kwargs.pop("text_color_unselected"))
+            for value, button in self._buttons_dict.items():
+                if value != self._current_value:
+                    button.configure(text_color=self._sb_text_color_unselected)
+
         if "background_corner_colors" in kwargs:
             self._background_corner_colors = kwargs.pop("background_corner_colors")
             for i in range(len(self._buttons_dict)):
@@ -341,6 +367,10 @@ class CTkSegmentedButton(CTkFrame):
             return self._sb_text_color
         elif attribute_name == "text_color_disabled":
             return self._sb_text_color_disabled
+        elif attribute_name == "text_color_selected":
+            return self._sb_text_color_selected
+        elif attribute_name == "text_color_unselected":
+            return self._sb_text_color_unselected
 
         elif attribute_name == "font":
             return self._font

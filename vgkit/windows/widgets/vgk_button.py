@@ -51,9 +51,13 @@ class VGkButton(CTkBaseClass):
         hover: bool = True,
         command: Union[Callable[[], Any], None] = None,
         anchor: str = "center",
+        style: str = "primary",
         **kwargs,
     ):
         super().__init__(master=master, bg_color=bg_color, width=width, height=height)
+
+        # ---- style ----
+        self._style: str = style
 
         # ---- mode ----
         if mode not in ("simple", "round"):
@@ -61,23 +65,24 @@ class VGkButton(CTkBaseClass):
         self._mode: str = mode
 
         # ---- colours (shared CTkButton theme keys) ----
+        theme_key = self._get_theme_key_for_style()
         self._fg_color = (
-            ThemeManager.theme["CTkButton"]["fg_color"]
+            ThemeManager.theme[theme_key]["fg_color"]
             if fg_color is None
             else self._check_color_type(fg_color, transparency=True)
         )
         self._hover_color = (
-            ThemeManager.theme["CTkButton"]["hover_color"]
+            ThemeManager.theme[theme_key]["hover_color"]
             if hover_color is None
             else self._check_color_type(hover_color)
         )
         self._text_color = (
-            ThemeManager.theme["CTkButton"]["text_color"]
+            ThemeManager.theme[theme_key]["text_color"]
             if text_color is None
             else self._check_color_type(text_color)
         )
         self._text_color_disabled = (
-            ThemeManager.theme["CTkButton"]["text_color_disabled"]
+            ThemeManager.theme[theme_key]["text_color_disabled"]
             if text_color_disabled is None
             else self._check_color_type(text_color_disabled)
         )
@@ -106,6 +111,18 @@ class VGkButton(CTkBaseClass):
 
         self._set_cursor()
         self._draw()
+
+    # ------------------------------------------------------------------
+    #  Theme utilities
+    # ------------------------------------------------------------------
+
+    def _get_theme_key_for_style(self) -> str:
+        """ Get the theme key based on button style """
+        if self._style == "secondary":
+            # Use CTkSecondaryButton theme if it exists, otherwise fallback to CTkButton
+            if "CTkSecondaryButton" in ThemeManager.theme:
+                return "CTkSecondaryButton"
+        return "CTkButton"
 
     # ------------------------------------------------------------------
     #  Construction helpers
