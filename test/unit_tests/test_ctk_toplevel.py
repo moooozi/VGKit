@@ -105,21 +105,21 @@ class TestCTkToplevel:
 
     def test_configure(self):
         print(" -> test_configure: ", end="")
-        self.ctk_toplevel.configure(bg="white")
+        self.ctk_toplevel.configure(fg_color="white")
         assert self.ctk_toplevel.fg_color == "white"
 
-        self.ctk_toplevel.configure(background="red")
+        self.ctk_toplevel.configure(fg_color="red")
         assert self.ctk_toplevel.fg_color == "red"
         assert self.ctk_toplevel.cget("bg") == "red"
 
-        self.ctk_toplevel.config(fg_color=("green", "#FFFFFF"))
+        self.ctk_toplevel.configure(fg_color=("green", "#FFFFFF"))
         assert self.ctk_toplevel.fg_color == ("green", "#FFFFFF")
         print("successful")
 
     def test_appearance_mode(self):
         print(" -> test_appearance_mode: ", end="")
         vgk.set_appearance_mode("light")
-        self.ctk_toplevel.config(fg_color=("green", "#FFFFFF"))
+        self.ctk_toplevel.configure(fg_color=("green", "#FFFFFF"))
         assert self.ctk_toplevel.cget("bg") == "green"
 
         vgk.set_appearance_mode("dark")
