@@ -104,7 +104,7 @@ class CTkTextbox(CTkBaseClass):
                                          button_hover_color=self._scrollbar_button_hover_color,
                                          orientation="vertical",
                                          command=self._textbox.yview)
-        self._textbox.configure(yscrollcommand=self._y_scrollbar.set)
+        self._textbox.configure(yscrollcommand=self._y_scroll_event_handler)
 
         self._x_scrollbar = CTkScrollbar(self,
                                          height=8,
@@ -115,11 +115,11 @@ class CTkTextbox(CTkBaseClass):
                                          button_hover_color=self._scrollbar_button_hover_color,
                                          orientation="horizontal",
                                          command=self._textbox.xview)
-        self._textbox.configure(xscrollcommand=self._x_scrollbar.set)
+        self._textbox.configure(xscrollcommand=self._x_scroll_event_handler)
 
         self._create_grid_for_text_and_scrollbars(re_grid_textbox=True, re_grid_x_scrollbar=True, re_grid_y_scrollbar=True)
 
-        self.after(50, self._check_if_scrollbars_needed, None, True)
+        self.after(50, self._check_if_scrollbars_needed)
         self._draw()
 
     def _create_grid_for_text_and_scrollbars(self, re_grid_textbox=False, re_grid_x_scrollbar=False, re_grid_y_scrollbar=False):
@@ -151,8 +151,19 @@ class CTkTextbox(CTkBaseClass):
             else:
                 self._y_scrollbar.grid_forget()
 
-    def _check_if_scrollbars_needed(self, event=None, continue_loop: bool = False):
-        """ Method hides or places the scrollbars if they are needed on key release event of tkinter.text widget """
+    def _y_scroll_event_handler(self, *args):
+        """yscrollcommand callback — updates scrollbar and checks visibility on-demand."""
+        self._y_scrollbar.set(*args)
+        self._check_if_scrollbars_needed()
+
+    def _x_scroll_event_handler(self, *args):
+        """xscrollcommand callback — updates scrollbar and checks visibility on-demand."""
+        self._x_scrollbar.set(*args)
+        self._check_if_scrollbars_needed()
+
+    def _check_if_scrollbars_needed(self, event=None):
+        """ Hides or shows scrollbars based on current content extents. Called on-demand
+            via scroll event handlers instead of a perpetual polling loop. """
 
         if self._scrollbars_activated:
             if self._textbox.xview() != (0.0, 1.0) and not self._x_scrollbar.winfo_ismapped():  # x scrollbar needed
@@ -172,9 +183,6 @@ class CTkTextbox(CTkBaseClass):
             self._hide_x_scrollbar = False
             self._hide_x_scrollbar = False
             self._create_grid_for_text_and_scrollbars(re_grid_y_scrollbar=True)
-
-        if self._textbox.winfo_exists() and continue_loop is True:
-            self.after(self._scrollbar_update_time, lambda: self._check_if_scrollbars_needed(continue_loop=True))
 
     def _set_scaling(self, *args, **kwargs):
         super()._set_scaling(*args, **kwargs)

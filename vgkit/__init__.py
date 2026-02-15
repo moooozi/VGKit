@@ -18,7 +18,8 @@ from .windows.widgets.core_rendering import CTkCanvas
 from .windows.widgets.core_widget_classes import CTkBaseClass
 
 # import widgets with new names
-from .windows.widgets import CTkButton as Button
+from .windows.widgets import CTkButton
+from .windows.widgets import VGkButton as Button
 from .windows.widgets import CTkCheckBox as CheckBox
 from .windows.widgets import CTkComboBox as ComboBox
 from .windows.widgets import CTkEntry as Entry
@@ -63,6 +64,7 @@ _ = (
 
 __all__ = [
     "Button",
+    "CTkButton",
     "CheckBox",
     "ComboBox",
     "Entry",

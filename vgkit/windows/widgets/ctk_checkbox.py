@@ -90,12 +90,6 @@ class CTkCheckBox(CTkBaseClass):
         self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self._bg_canvas = CTkCanvas(master=self,
-                                    highlightthickness=0,
-                                    width=self._apply_widget_scaling(self._desired_width),
-                                    height=self._apply_widget_scaling(self._desired_height))
-        self._bg_canvas.grid(row=0, column=0, columnspan=3, sticky="nswe")
-
         self._canvas = CTkCanvas(master=self,
                                  highlightthickness=0,
                                  width=self._apply_widget_scaling(self._checkbox_width),
@@ -142,17 +136,12 @@ class CTkCheckBox(CTkBaseClass):
         self._text_label.configure(font=self._apply_font_scaling(self._font))
 
         self._canvas.delete("checkmark")
-        self._bg_canvas.configure(width=self._apply_widget_scaling(self._desired_width),
-                                  height=self._apply_widget_scaling(self._desired_height))
         self._canvas.configure(width=self._apply_widget_scaling(self._checkbox_width),
                                height=self._apply_widget_scaling(self._checkbox_height))
         self._draw(no_color_updates=True)
 
     def _set_dimensions(self, width: int = None, height: int = None):
         super()._set_dimensions(width, height)
-
-        self._bg_canvas.configure(width=self._apply_widget_scaling(self._desired_width),
-                                  height=self._apply_widget_scaling(self._desired_height))
 
     def _update_font(self):
         """ pass font to tkinter widgets with applied font scaling and update grid with workaround """
@@ -161,8 +150,8 @@ class CTkCheckBox(CTkBaseClass):
 
             # Workaround to force grid to be resized when text changes size.
             # Otherwise grid will lag and only resizes if other mouse action occurs.
-            self._bg_canvas.grid_forget()
-            self._bg_canvas.grid(row=0, column=0, columnspan=3, sticky="nswe")
+            self._canvas.grid_forget()
+            self._canvas.grid(row=0, column=0, sticky="e")
 
     def destroy(self):
         if self._variable is not None:
@@ -190,7 +179,7 @@ class CTkCheckBox(CTkBaseClass):
             self._canvas.delete("checkmark")
 
         if no_color_updates is False or requires_recoloring_1 or requires_recoloring_2:
-            self._bg_canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+            tkinter.Frame.configure(self, bg=self._apply_appearance_mode(self._bg_color))
             self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
             if self._check_state is True:
@@ -201,10 +190,7 @@ class CTkCheckBox(CTkBaseClass):
                                         outline=self._apply_appearance_mode(self._fg_color),
                                         fill=self._apply_appearance_mode(self._fg_color))
 
-                if "create_line" in self._canvas.gettags("checkmark"):
-                    self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
-                else:
-                    self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
+                self._canvas.itemconfig("checkmark", fill=self._apply_appearance_mode(self._checkmark_color))
             else:
                 self._canvas.itemconfig("inner_parts",
                                         outline=self._apply_appearance_mode(self._bg_color),

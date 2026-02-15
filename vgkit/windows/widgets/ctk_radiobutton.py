@@ -87,16 +87,12 @@ class CTkRadioButton(CTkBaseClass):
         self.grid_columnconfigure(2, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self._bg_canvas = CTkCanvas(master=self,
-                                    highlightthickness=0,
-                                    width=self._apply_widget_scaling(self._current_width),
-                                    height=self._apply_widget_scaling(self._current_height))
-        self._bg_canvas.grid(row=0, column=0, columnspan=3, sticky="nswe")
-
-        self._canvas = CTkCanvas(master=self,
-                                 highlightthickness=0,
-                                 width=self._apply_widget_scaling(self._radiobutton_width),
-                                 height=self._apply_widget_scaling(self._radiobutton_height))
+        self._canvas = CTkCanvas(
+            master=self,
+            highlightthickness=0,
+            width=self._apply_widget_scaling(self._radiobutton_width),
+            height=self._apply_widget_scaling(self._radiobutton_height),
+        )
         self._canvas.grid(row=0, column=0)
         self._draw_engine = DrawEngine(self._canvas)
 
@@ -137,17 +133,14 @@ class CTkRadioButton(CTkBaseClass):
         self.grid_columnconfigure(1, weight=0, minsize=self._apply_widget_scaling(6))
         self._text_label.configure(font=self._apply_font_scaling(self._font))
 
-        self._bg_canvas.configure(width=self._apply_widget_scaling(self._desired_width),
-                                  height=self._apply_widget_scaling(self._desired_height))
-        self._canvas.configure(width=self._apply_widget_scaling(self._radiobutton_width),
-                               height=self._apply_widget_scaling(self._radiobutton_height))
+        self._canvas.configure(
+            width=self._apply_widget_scaling(self._radiobutton_width),
+            height=self._apply_widget_scaling(self._radiobutton_height),
+        )
         self._draw(no_color_updates=True)
 
     def _set_dimensions(self, width: int = None, height: int = None):
         super()._set_dimensions(width, height)
-
-        self._bg_canvas.configure(width=self._apply_widget_scaling(self._desired_width),
-                                  height=self._apply_widget_scaling(self._desired_height))
 
     def _update_font(self):
         """ pass font to tkinter widgets with applied font scaling and update grid with workaround """
@@ -155,8 +148,8 @@ class CTkRadioButton(CTkBaseClass):
 
         # Workaround to force grid to be resized when text changes size.
         # Otherwise grid will lag and only resizes if other mouse action occurs.
-        self._bg_canvas.grid_forget()
-        self._bg_canvas.grid(row=0, column=0, columnspan=3, sticky="nswe")
+        self._canvas.grid_forget()
+        self._canvas.grid(row=0, column=0)
 
     def destroy(self):
         if self._variable is not None:
@@ -182,7 +175,9 @@ class CTkRadioButton(CTkBaseClass):
                                                                                   self._apply_widget_scaling(self._border_width_unchecked))
 
         if no_color_updates is False or requires_recoloring:
-            self._bg_canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
+            tkinter.Frame.configure(
+                self, bg=self._apply_appearance_mode(self._bg_color)
+            )
             self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
             if self._check_state is False:

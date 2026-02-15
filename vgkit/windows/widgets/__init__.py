@@ -1,4 +1,5 @@
 from .ctk_button import CTkButton
+from .vgk_button import VGkButton
 from .ctk_checkbox import CTkCheckBox
 from .ctk_combobox import CTkComboBox
 from .ctk_entry import CTkEntry

@@ -158,8 +158,6 @@ class CTkScrollbar(CTkBaseClass):
                                         fill=self._apply_appearance_mode(self._fg_color),
                                         outline=self._apply_appearance_mode(self._fg_color))
 
-        self._canvas.update_idletasks()
-
     def configure(self, require_redraw=False, **kwargs):
         if "fg_color" in kwargs:
             self._fg_color = self._check_color_type(kwargs.pop("fg_color"), transparency=True)
@@ -250,9 +248,13 @@ class CTkScrollbar(CTkBaseClass):
                 self._command('scroll', -event.delta, 'units')
 
     def set(self, start_value: float, end_value: float):
-        self._start_value = float(start_value)
-        self._end_value = float(end_value)
-        self._draw()
+        start_value = float(start_value)
+        end_value = float(end_value)
+        if start_value == self._start_value and end_value == self._end_value:
+            return
+        self._start_value = start_value
+        self._end_value = end_value
+        self._draw(no_color_updates=True)
 
     def get(self):
         return self._start_value, self._end_value

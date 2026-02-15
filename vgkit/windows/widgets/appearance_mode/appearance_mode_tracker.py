@@ -1,5 +1,7 @@
 import tkinter
+import threading
 from typing import Callable
+
 import darkdetect
 
 
@@ -7,11 +9,12 @@ class AppearanceModeTracker:
 
     callback_list = []
     app_list = []
-    update_loop_running = False
-    update_loop_interval = 30  # milliseconds
 
     appearance_mode_set_by = "system"
     appearance_mode = 0  # Light (standard)
+
+    _listener_thread: threading.Thread = None
+    _listener_started = False
 
     @classmethod
     def init_appearance_mode(cls):
@@ -23,6 +26,40 @@ class AppearanceModeTracker:
                 cls.update_callbacks()
 
     @classmethod
+    def _start_listener(cls):
+        """Start the darkdetect listener thread (once) to receive OS theme change callbacks."""
+        if cls._listener_started:
+            return
+        cls._listener_started = True
+
+        def _on_theme_change(theme_str: str):
+            """Called from darkdetect listener thread when OS theme changes."""
+            if cls.appearance_mode_set_by != "system":
+                return
+
+            new_mode = 1 if theme_str == "Dark" else 0
+            if new_mode != cls.appearance_mode:
+                cls.appearance_mode = new_mode
+                cls._schedule_update_on_main_thread()
+
+        cls._listener_thread = threading.Thread(
+            target=darkdetect.listener,
+            args=(_on_theme_change,),
+            daemon=True,
+        )
+        cls._listener_thread.start()
+
+    @classmethod
+    def _schedule_update_on_main_thread(cls):
+        """Use any available Tk root to schedule update_callbacks on the main thread."""
+        for app in cls.app_list:
+            try:
+                app.after(0, cls.update_callbacks)
+                return
+            except Exception:
+                continue
+
+    @classmethod
     def add(cls, callback: Callable, widget=None):
         cls.callback_list.append(callback)
 
@@ -30,10 +67,7 @@ class AppearanceModeTracker:
             app = cls.get_tk_root_of_widget(widget)
             if app not in cls.app_list:
                 cls.app_list.append(app)
-
-                if not cls.update_loop_running:
-                    app.after(cls.update_loop_interval, cls.update)
-                    cls.update_loop_running = True
+            cls._start_listener()
 
     @classmethod
     def remove(cls, callback: Callable):
@@ -78,25 +112,6 @@ class AppearanceModeTracker:
                     continue
 
     @classmethod
-    def update(cls):
-        if cls.appearance_mode_set_by == "system":
-            new_appearance_mode = cls.detect_appearance_mode()
-
-            if new_appearance_mode != cls.appearance_mode:
-                cls.appearance_mode = new_appearance_mode
-                cls.update_callbacks()
-
-        # find an existing tkinter.Tk object for the next call of .after()
-        for app in cls.app_list:
-            try:
-                app.after(cls.update_loop_interval, cls.update)
-                return
-            except Exception:
-                continue
-
-        cls.update_loop_running = False
-
-    @classmethod
     def get_mode(cls) -> int:
         return cls.appearance_mode
 
@@ -120,6 +135,7 @@ class AppearanceModeTracker:
 
         elif mode_string.lower() == "system":
             cls.appearance_mode_set_by = "system"
-
-
-
+            new_appearance_mode = cls.detect_appearance_mode()
+            if new_appearance_mode != cls.appearance_mode:
+                cls.appearance_mode = new_appearance_mode
+                cls.update_callbacks()

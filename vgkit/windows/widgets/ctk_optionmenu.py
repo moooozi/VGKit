@@ -219,8 +219,6 @@ class CTkOptionMenu(CTkBaseClass):
 
             self._text_label.configure(bg=self._apply_appearance_mode(self._fg_color))
 
-        self._canvas.update_idletasks()
-
     def configure(self, require_redraw=False, **kwargs):
         if "corner_radius" in kwargs:
             self._corner_radius = kwargs.pop("corner_radius")

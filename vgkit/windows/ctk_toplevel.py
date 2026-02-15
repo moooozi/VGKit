@@ -107,7 +107,7 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         self.after(1000, self._set_scaled_min_max)  # Why 1000ms delay? Experience! (Everything tested on Windows 11)
 
     def block_update_dimensions_event(self):
-        self._block_update_dimensions_event = False
+        self._block_update_dimensions_event = True
 
     def unblock_update_dimensions_event(self):
         self._block_update_dimensions_event = False

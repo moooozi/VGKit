@@ -271,11 +271,11 @@ class CTkProgressBar(CTkBaseClass):
                 self._determinate_value += self._determinate_speed / 50
                 if self._determinate_value > 1:
                     self._determinate_value -= 1
-                self._draw()
+                self._draw(no_color_updates=True)
                 self._loop_after_id = self.after(20, self._internal_loop)
             else:
                 self._indeterminate_value += self._indeterminate_speed
-                self._draw()
+                self._draw(no_color_updates=True)
                 self._loop_after_id = self.after(20, self._internal_loop)
 
     def step(self):

@@ -287,7 +287,6 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
     def _set_appearance_mode(self, mode_string):
         super()._set_appearance_mode(mode_string)
         self._draw()
-        super().update_idletasks()
 
     def _set_scaling(self, new_widget_scaling, new_window_scaling):
         super()._set_scaling(new_widget_scaling, new_window_scaling)
@@ -410,6 +409,3 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
         """Unmap this widget but remember the grid options."""
         self._last_geometry_manager_call = None
         return super().grid_remove()
-
-
-
