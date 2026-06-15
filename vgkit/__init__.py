@@ -1,56 +1,50 @@
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
-import os
-import sys
-from tkinter import Variable, StringVar, IntVar, DoubleVar, BooleanVar
-from tkinter.constants import *
 import tkinter.filedialog as filedialog
+from tkinter import BooleanVar, DoubleVar, IntVar, StringVar, Variable
+from tkinter.constants import *
 
-# import manager classes
-from .windows.widgets.appearance_mode import AppearanceModeTracker
-from .windows.widgets.font import FontManager
-from .windows.widgets.scaling import ScalingTracker
-from .windows.widgets.theme import ThemeManager
-from .windows.widgets.core_rendering import DrawEngine
-
-# import base widgets
-from .windows.widgets.core_rendering import CTkCanvas
-from .windows.widgets.core_widget_classes import CTkBaseClass
+# import windows
+from .windows import CTk as Window
+from .windows import CTkInputDialog as InputDialog
+from .windows import CTkToplevel as Toplevel
+from .windows import ctk_tk
 
 # import widgets with new names
-from .windows.widgets import CTkButton
-from .windows.widgets import VGkButton as Button
+from .windows.widgets import CTkButton, TreeView
 from .windows.widgets import CTkCheckBox as CheckBox
 from .windows.widgets import CTkComboBox as ComboBox
 from .windows.widgets import CTkEntry as Entry
 from .windows.widgets import CTkFrame as Container
-from .windows.widgets import VGkFrame as Frame
-from .windows.widgets import VGkLabel as Label
 from .windows.widgets import CTkOptionMenu as OptionMenu
 from .windows.widgets import CTkProgressBar as ProgressBar
 from .windows.widgets import CTkRadioButton as RadioButton
+from .windows.widgets import CTkScrollableFrame as ScrollableFrame
 from .windows.widgets import CTkScrollbar as Scrollbar
 from .windows.widgets import CTkSegmentedButton as SegmentedButton
 from .windows.widgets import CTkSlider as Slider
 from .windows.widgets import CTkSwitch as Switch
 from .windows.widgets import CTkTabview as Tabview
 from .windows.widgets import CTkTextbox as Textbox
-from .windows.widgets import CTkScrollableFrame as ScrollableFrame
-from .windows.widgets import TreeView
+from .windows.widgets import VGkButton as Button
+from .windows.widgets import VGkFrame as Frame
+from .windows.widgets import VGkLabel as Label
 
-# import windows
-from .windows import CTk as Window
-from .windows import CTkToplevel as Toplevel
-from .windows import CTkInputDialog as InputDialog
+# import manager classes
+from .windows.widgets.appearance_mode import AppearanceModeTracker
+
+# import base widgets
+from .windows.widgets.core_rendering import CTkCanvas, DrawEngine
+from .windows.widgets.core_widget_classes import CTkBaseClass
 
 # import font classes
 from .windows.widgets.font import CTkFont as Font
+from .windows.widgets.font import FontManager
 
 # import image classes
 from .windows.widgets.image import CTkImage as Image
-
-from .windows import ctk_tk
-
+from .windows.widgets.scaling import ScalingTracker
+from .windows.widgets.theme import ThemeManager
 
 _ = (
     Variable,

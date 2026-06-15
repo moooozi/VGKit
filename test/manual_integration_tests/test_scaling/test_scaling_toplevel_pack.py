@@ -1,4 +1,5 @@
 import tkinter
+
 import vgkit as vgk  # <- import the vgkit module
 
 vgk.ScalingTracker.set_window_scaling(0.5)

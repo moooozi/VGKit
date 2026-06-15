@@ -39,9 +39,12 @@ app.mainloop()
 - Tests use `root.after()` to schedule test steps sequentially
 
 ## Build & Release Workflow
-- **Dependencies**: Listed in `requirements.txt` and `setup.cfg`
-- **Versioning**: Update `__version__` in `vgkit/__init__.py`, then run `tbump` (configured in `pyproject.toml`)
-- **Packaging**: Uses setuptools; includes all subpackages in `setup.cfg`
+- **Package manager**: [uv](https://docs.astral.sh/uv/) — `uv sync` installs deps, `uv run` executes in the project env
+- **Dependencies**: Declared in `pyproject.toml` `[project.dependencies]`; dev tools in `[dependency-groups].dev`
+- **Versioning**: Run `tbump` (configured in `pyproject.toml`) to bump `pyproject.toml` and `vgkit/__init__.py`
+- **Packaging**: Hatchling build backend; `uv build` produces wheel + sdist
+- **Linting**: Ruff (`uv run ruff check .`, `uv run ruff format .`)
+- **CI**: GitHub Actions runs ruff + import smoke test + build on Python 3.10–3.13
 
 ## Theme & Assets
 - **Themes**: JSON files in `vgkit/assets/themes/` with light/dark color arrays

@@ -41,38 +41,22 @@ class TestCTkToplevel:
     def test_geometry(self):
         print(" -> test_geometry: ", end="")
         self.ctk_toplevel.geometry("200x300+200+300")
-        assert (
-            self.ctk_toplevel.current_width == 200
-            and self.ctk_toplevel.current_height == 300
-        )
+        assert self.ctk_toplevel._current_width == 200 and self.ctk_toplevel._current_height == 300
 
         self.ctk_toplevel.minsize(300, 400)
-        assert (
-            self.ctk_toplevel.current_width == 300
-            and self.ctk_toplevel.current_height == 400
-        )
-        assert (
-            self.ctk_toplevel.min_width == 300 and self.ctk_toplevel.min_height == 400
-        )
+        assert self.ctk_toplevel._current_width == 300 and self.ctk_toplevel._current_height == 400
+        assert self.ctk_toplevel._min_width == 300 and self.ctk_toplevel._min_height == 400
 
         self.ctk_toplevel.maxsize(400, 500)
         self.ctk_toplevel.geometry("600x600")
-        assert (
-            self.ctk_toplevel.current_width == 400
-            and self.ctk_toplevel.current_height == 500
-        )
-        assert (
-            self.ctk_toplevel.max_width == 400 and self.ctk_toplevel.max_height == 500
-        )
+        assert self.ctk_toplevel._current_width == 400 and self.ctk_toplevel._current_height == 500
+        assert self.ctk_toplevel._max_width == 400 and self.ctk_toplevel._max_height == 500
 
         self.ctk_toplevel.maxsize(1000, 1000)
         self.ctk_toplevel.geometry("300x400")
         self.ctk_toplevel.resizable(False, False)
         self.ctk_toplevel.geometry("500x600")
-        assert (
-            self.ctk_toplevel.current_width == 500
-            and self.ctk_toplevel.current_height == 600
-        )
+        assert self.ctk_toplevel._current_width == 500 and self.ctk_toplevel._current_height == 600
         print("successful")
 
     def test_scaling(self):
@@ -80,40 +64,31 @@ class TestCTkToplevel:
 
         vgk.ScalingTracker.set_window_scaling(1.5)
         self.ctk_toplevel.geometry("300x400")
+        assert self.ctk_toplevel._current_width == 300 and self.ctk_toplevel._current_height == 400
         assert (
-            self.ctk_toplevel.current_width == 300
-            and self.ctk_toplevel.current_height == 400
-        )
-        assert (
-            self.root_ctk.window_scaling
+            self.root_ctk._get_window_scaling()
             == 1.5 * vgk.ScalingTracker.get_window_dpi_scaling(self.root_ctk)
         )
 
         self.ctk_toplevel.maxsize(400, 500)
         self.ctk_toplevel.geometry("500x500")
-        assert (
-            self.ctk_toplevel.current_width == 400
-            and self.ctk_toplevel.current_height == 500
-        )
+        assert self.ctk_toplevel._current_width == 400 and self.ctk_toplevel._current_height == 500
 
         vgk.ScalingTracker.set_window_scaling(1)
-        assert (
-            self.ctk_toplevel.current_width == 400
-            and self.ctk_toplevel.current_height == 500
-        )
+        assert self.ctk_toplevel._current_width == 400 and self.ctk_toplevel._current_height == 500
         print("successful")
 
     def test_configure(self):
         print(" -> test_configure: ", end="")
         self.ctk_toplevel.configure(fg_color="white")
-        assert self.ctk_toplevel.fg_color == "white"
+        assert self.ctk_toplevel.cget("fg_color") == "white"
 
         self.ctk_toplevel.configure(fg_color="red")
-        assert self.ctk_toplevel.fg_color == "red"
+        assert self.ctk_toplevel.cget("fg_color") == "red"
         assert self.ctk_toplevel.cget("bg") == "red"
 
         self.ctk_toplevel.configure(fg_color=("green", "#FFFFFF"))
-        assert self.ctk_toplevel.fg_color == ("green", "#FFFFFF")
+        assert self.ctk_toplevel.cget("fg_color") == ("green", "#FFFFFF")
         print("successful")
 
     def test_appearance_mode(self):

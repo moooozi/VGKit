@@ -1,16 +1,73 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vgkit"
+version = "0.1.1"
+description = "Create modern looking GUIs with Python"
+readme = "Readme.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [
+    { name = "M Zidane" },
+]
+keywords = ["gui", "tkinter", "customtkinter", "ui"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "darkdetect~=0.8.0",
+    "packaging~=25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/moooozi/vgkit"
+Documentation = "https://github.com/moooozi/vgkit"
+Repository = "https://github.com/moooozi/vgkit"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9",
+    "tbump>=6.11",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["vgkit"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["vgkit", "test", "examples"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "UP",
+]
+ignore = [
+    "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401", "F403", "F405"]
+"test/**" = ["F401", "E402", "E741"]
+"examples/**" = ["F401"]
+"vgkit/**" = ["E721", "F821", "F841"]
 
 [tool.tbump]
 github_url = "https://github.com/moooozi/vgkit"
 
 [tool.tbump.version]
-current = "0.1.0"
-
-# Example of a semver regexp.
-# Make sure this matches current_version before
-# using tbump
+current = "0.1.1"
 regex = '''
   (?P<major>\d+)
   \.
@@ -20,18 +77,17 @@ regex = '''
   '''
 
 [tool.tbump.git]
-message_template = "Bump to {new_version}"
+message_template = "ver: Bump to {new_version}"
 tag_template = "v{new_version}"
 
-# For each file to patch, add a [[tool.tbump.file]] config
-# section containing the path of the file, relative to the
-# tbump.toml location.
 [[tool.tbump.file]]
-src = "setup.cfg"
+src = "pyproject.toml"
+search = 'version = "{current_version}"'
 
 [[tool.tbump.file]]
 src = "vgkit/__init__.py"
-search = "__version__ = \"{current_version}\""
+search = '__version__ = "{current_version}"'
 
-
-
+[[tool.tbump.hook]]
+name = "uv lock"
+cmd = "uv lock"

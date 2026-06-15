@@ -9,11 +9,25 @@ VGKit is a fork of [CustomTkinter](https://github.com/TomSchimansky/CustomTkinte
 *Note: This is a fork tailored to my specific needs. It's not well documented or maintained for everyone else.*
 
 ## Installation
-Install the module with pip:
+
+Iinstall from source with [uv](https://docs.astral.sh/uv/):
+```bash
+git clone https://github.com/moooozi/vgkit.git
+cd vgkit
+uv sync
+uv run python examples/complex_example.py
 ```
-pip3 install vgkit
+
+**Update existing installation:** `pip install vgkit --upgrade`
+
+## Development
+
+```bash
+uv sync --group dev    # install package + dev tools
+uv run ruff check .    # lint
+uv run ruff format .   # format
+uv build               # build wheel + sdist
 ```
-**Update existing installation:** ```pip3 install vgkit --upgrade```
 
 ## Usage
 ```python
@@ -29,4 +43,3 @@ label = vgk.Label(app, text="Hello, VGKit!")
 # Run the app
 app.mainloop()
 ```
-

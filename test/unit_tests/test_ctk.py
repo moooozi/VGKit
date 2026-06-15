@@ -38,30 +38,22 @@ class TestCTk:
     def test_geometry(self):
         print(" -> test_geometry: ", end="")
         self.root_ctk.geometry("100x200+200+300")
-        assert (
-            self.root_ctk.current_width == 100 and self.root_ctk.current_height == 200
-        )
+        assert self.root_ctk._current_width == 100 and self.root_ctk._current_height == 200
 
         self.root_ctk.minsize(300, 400)
-        assert (
-            self.root_ctk.current_width == 300 and self.root_ctk.current_height == 400
-        )
-        assert self.root_ctk.min_width == 300 and self.root_ctk.min_height == 400
+        assert self.root_ctk._current_width == 300 and self.root_ctk._current_height == 400
+        assert self.root_ctk._min_width == 300 and self.root_ctk._min_height == 400
 
         self.root_ctk.maxsize(400, 500)
         self.root_ctk.geometry("600x600")
-        assert (
-            self.root_ctk.current_width == 400 and self.root_ctk.current_height == 500
-        )
-        assert self.root_ctk.max_width == 400 and self.root_ctk.max_height == 500
+        assert self.root_ctk._current_width == 400 and self.root_ctk._current_height == 500
+        assert self.root_ctk._max_width == 400 and self.root_ctk._max_height == 500
 
         self.root_ctk.maxsize(1000, 1000)
         self.root_ctk.geometry("300x400")
         self.root_ctk.resizable(False, False)
         self.root_ctk.geometry("500x600")
-        assert (
-            self.root_ctk.current_width == 500 and self.root_ctk.current_height == 600
-        )
+        assert self.root_ctk._current_width == 500 and self.root_ctk._current_height == 600
         print("successful")
 
     def test_scaling(self):
@@ -69,24 +61,18 @@ class TestCTk:
 
         vgk.ScalingTracker.set_window_scaling(1.5)
         self.root_ctk.geometry("300x400")
+        assert self.root_ctk._current_width == 300 and self.root_ctk._current_height == 400
         assert (
-            self.root_ctk._current_width == 300 and self.root_ctk._current_height == 400
-        )
-        assert (
-            self.root_ctk.window_scaling
+            self.root_ctk._get_window_scaling()
             == 1.5 * vgk.ScalingTracker.get_window_dpi_scaling(self.root_ctk)
         )
 
         self.root_ctk.maxsize(400, 500)
         self.root_ctk.geometry("500x500")
-        assert (
-            self.root_ctk._current_width == 400 and self.root_ctk._current_height == 500
-        )
+        assert self.root_ctk._current_width == 400 and self.root_ctk._current_height == 500
 
         vgk.ScalingTracker.set_window_scaling(1)
-        assert (
-            self.root_ctk._current_width == 400 and self.root_ctk._current_height == 500
-        )
+        assert self.root_ctk._current_width == 400 and self.root_ctk._current_height == 500
         print("successful")
 
     def test_configure(self):
