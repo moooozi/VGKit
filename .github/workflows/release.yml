@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create or update release branch from main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git fetch origin release || true
+          git checkout -B release origin/main
+          git push --force origin release
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: moooozi/tag-version-action@v1

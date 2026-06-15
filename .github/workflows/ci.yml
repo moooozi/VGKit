@@ -14,9 +14,3 @@ jobs:
       - run: uv sync --group dev
       - run: uv run ruff check .
       - run: uv run ruff format --check .
-
-  tag:
-    if: github.ref == 'refs/heads/release'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: moooozi/tag-version-action@v1
