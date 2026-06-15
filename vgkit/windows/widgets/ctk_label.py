@@ -1,13 +1,13 @@
 import tkinter
-from typing import Union, Tuple, Callable, Optional, Any
+from collections.abc import Callable
+from typing import Any
 
-from .core_rendering import CTkCanvas
-from .theme import ThemeManager
-from .core_rendering import DrawEngine
+from .core_rendering import CTkCanvas, DrawEngine
 from .core_widget_classes import CTkBaseClass
 from .font import CTkFont
 from .image import CTkImage
-from .utility import pop_from_dict_by_set, check_kwargs_empty
+from .theme import ThemeManager
+from .utility import check_kwargs_empty, pop_from_dict_by_set
 
 
 class CTkLabel(CTkBaseClass):
@@ -35,18 +35,18 @@ class CTkLabel(CTkBaseClass):
         master: Any,
         width: int = 0,
         height: int = 28,
-        corner_radius: Optional[int] = None,
-        bg_color: Union[str, Tuple[str, str]] = "transparent",
-        fg_color: Optional[Union[str, Tuple[str, str]]] = None,
-        text_color: Optional[Union[str, Tuple[str, str]]] = None,
-        text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
+        corner_radius: int | None = None,
+        bg_color: str | tuple[str, str] = "transparent",
+        fg_color: str | tuple[str, str] | None = None,
+        text_color: str | tuple[str, str] | None = None,
+        text_color_disabled: str | tuple[str, str] | None = None,
         text: str = "CTkLabel",
-        font: Optional[Union[tuple, CTkFont]] = None,
-        image: Union[CTkImage, None] = None,
+        font: tuple | CTkFont | None = None,
+        image: CTkImage | None = None,
         compound: str = "center",
         anchor: str = "center",  # label anchor: center, n, e, s, w
         wraplength: int = 0,
-        **kwargs
+        **kwargs,
     ):
 
         # transfer basic functionality (_bg_color, size, __appearance_mode, scaling) to CTkBaseClass
@@ -120,9 +120,7 @@ class CTkLabel(CTkBaseClass):
             text=self._text,
             font=self._apply_font_scaling(self._font),
         )
-        self._label.configure(
-            **pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes)
-        )
+        self._label.configure(**pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes))
 
         check_kwargs_empty(kwargs, raise_error=True)
 
@@ -215,9 +213,7 @@ class CTkLabel(CTkBaseClass):
 
                 self._label.configure(
                     fg=self._apply_appearance_mode(self._text_color),
-                    disabledforeground=self._apply_appearance_mode(
-                        self._text_color_disabled
-                    ),
+                    disabledforeground=self._apply_appearance_mode(self._text_color_disabled),
                     bg=self._apply_appearance_mode(self._bg_color),
                 )
             else:
@@ -229,9 +225,7 @@ class CTkLabel(CTkBaseClass):
 
                 self._label.configure(
                     fg=self._apply_appearance_mode(self._text_color),
-                    disabledforeground=self._apply_appearance_mode(
-                        self._text_color_disabled
-                    ),
+                    disabledforeground=self._apply_appearance_mode(self._text_color_disabled),
                     bg=self._apply_appearance_mode(self._fg_color),
                 )
 
@@ -244,9 +238,7 @@ class CTkLabel(CTkBaseClass):
             require_redraw = True
 
         if "fg_color" in kwargs:
-            self._fg_color = self._check_color_type(
-                kwargs.pop("fg_color"), transparency=True
-            )
+            self._fg_color = self._check_color_type(kwargs.pop("fg_color"), transparency=True)
             require_redraw = True
 
         if "text_color" in kwargs:
@@ -254,9 +246,7 @@ class CTkLabel(CTkBaseClass):
             require_redraw = True
 
         if "text_color_disabled" in kwargs:
-            self._text_color_disabled = self._check_color_type(
-                kwargs.pop("text_color_disabled")
-            )
+            self._text_color_disabled = self._check_color_type(kwargs.pop("text_color_disabled"))
             require_redraw = True
 
         if "text" in kwargs:
@@ -290,16 +280,12 @@ class CTkLabel(CTkBaseClass):
 
         if "wraplength" in kwargs:
             self._wraplength = kwargs.pop("wraplength")
-            self._label.configure(
-                wraplength=self._apply_widget_scaling(self._wraplength)
-            )
+            self._label.configure(wraplength=self._apply_widget_scaling(self._wraplength))
 
         self._label.configure(
             **pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes)
         )  # configure tkinter.Label
-        super().configure(
-            require_redraw=require_redraw, **kwargs
-        )  # configure CTkBaseClass
+        super().configure(require_redraw=require_redraw, **kwargs)  # configure CTkBaseClass
 
     def cget(self, attribute_name: str) -> any:
         if attribute_name == "corner_radius":
@@ -339,7 +325,7 @@ class CTkLabel(CTkBaseClass):
         self._canvas.bind(sequence, command, add=True)
         self._label.bind(sequence, command, add=True)
 
-    def unbind(self, sequence: str = None, funcid: Optional[str] = None):
+    def unbind(self, sequence: str = None, funcid: str | None = None):
         """called on the tkinter.Label and tkinter.Canvas"""
         if funcid is not None:
             raise ValueError(

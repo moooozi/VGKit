@@ -27,6 +27,3 @@ button_1 = vgk.Button(app, text="start test", command=change_appearance_mode)
 button_1.pack(pady=20, padx=20)
 
 app.mainloop()
-
-
-

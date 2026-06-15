@@ -1,6 +1,5 @@
 import vgkit as vgk
 
-
 app = vgk.Window()
 app.geometry("1200x1000")
 app.grid_rowconfigure(0, weight=1)
@@ -40,16 +39,12 @@ b = vgk.Button(frame_1, text="object single name", font=vgk.Font("Times"))
 b.pack(pady=2)
 b = vgk.Button(frame_1, text="object with name and size", font=vgk.Font("Times", 18))
 b.pack(pady=2)
-b = vgk.Button(
-    frame_1, text="object with name and negative size", font=vgk.Font("Times", -18)
-)
+b = vgk.Button(frame_1, text="object with name and negative size", font=vgk.Font("Times", -18))
 b.pack(pady=2)
 b = vgk.Button(
     frame_1,
     text="object with extra keywords",
-    font=vgk.Font(
-        "Times", -18, weight="bold", slant="italic", underline=True, overstrike=True
-    ),
+    font=vgk.Font("Times", -18, weight="bold", slant="italic", underline=True, overstrike=True),
 )
 b.pack(pady=2)
 

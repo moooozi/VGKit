@@ -21,17 +21,13 @@ frame_1 = vgk.ScrollableFrame(
 frame_1.grid(row=0, column=0, padx=20, pady=20)
 frame_1.configure(label_text=None)
 
-frame_2 = vgk.ScrollableFrame(
-    app, orientation="vertical", label_text="CTkScrollableFrame"
-)
+frame_2 = vgk.ScrollableFrame(app, orientation="vertical", label_text="CTkScrollableFrame")
 frame_2.grid(row=1, column=0, padx=20, pady=20)
 
 frame_3 = vgk.ScrollableFrame(app, orientation="horizontal")
 frame_3.grid(row=0, column=1, padx=20, pady=20)
 
-frame_4 = vgk.ScrollableFrame(
-    app, orientation="horizontal", label_fg_color="transparent"
-)
+frame_4 = vgk.ScrollableFrame(app, orientation="horizontal", label_fg_color="transparent")
 frame_4.grid(row=1, column=1, padx=20, pady=20)
 frame_4.configure(label_text="CTkScrollableFrame")
 

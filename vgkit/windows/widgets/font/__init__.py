@@ -1,11 +1,10 @@
 import sys
-
-from .ctk_font import CTkFont
-from .font_manager import FontManager
+from pathlib import Path
 
 # import DrawEngine to set preferred_drawing_method if loading shapes font fails
 from ..core_rendering import DrawEngine
-from pathlib import Path
+from .ctk_font import CTkFont
+from .font_manager import FontManager
 
 FontManager.init_font_manager()
 
@@ -13,13 +12,9 @@ FontManager.init_font_manager()
 vgkit_directory = Path(__file__).parent.parent.parent.parent
 
 # Debug: Ensure fonts exist before loading
-FontManager.load_font(
-    str(vgkit_directory / "assets" / "fonts" / "Roboto" / "Roboto-Regular.ttf")
-)
+FontManager.load_font(str(vgkit_directory / "assets" / "fonts" / "Roboto" / "Roboto-Regular.ttf"))
 
-FontManager.load_font(
-    str(vgkit_directory / "assets" / "fonts" / "Roboto" / "Roboto-Medium.ttf")
-)
+FontManager.load_font(str(vgkit_directory / "assets" / "fonts" / "Roboto" / "Roboto-Medium.ttf"))
 
 # load font necessary for rendering the widgets (used on Windows/Linux)
 if (

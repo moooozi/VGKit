@@ -1,15 +1,13 @@
-import sys
+import json
 import os
 import pathlib
-import json
-from typing import List, Union
+import sys
 
 
 class ThemeManager:
-
     theme: dict = {}  # contains all the theme data
-    _built_in_themes: List[str] = ["blue"]
-    _currently_loaded_theme: Union[str, None] = None
+    _built_in_themes: list[str] = ["blue"]
+    _currently_loaded_theme: str | None = None
 
     @classmethod
     def load_theme(cls, theme_name_or_path: str):
@@ -17,10 +15,12 @@ class ThemeManager:
 
         if theme_name_or_path in cls._built_in_themes:
             vgkit_path = pathlib.Path(script_directory).parent.parent.parent
-            with open(os.path.join(vgkit_path, "assets", "themes", f"{theme_name_or_path}.json"), "r") as f:
+            with open(
+                os.path.join(vgkit_path, "assets", "themes", f"{theme_name_or_path}.json")
+            ) as f:
                 cls.theme = json.load(f)
         else:
-            with open(theme_name_or_path, "r") as f:
+            with open(theme_name_or_path) as f:
                 cls.theme = json.load(f)
 
         # store theme path for saving
@@ -47,12 +47,9 @@ class ThemeManager:
     def save_theme(cls):
         if cls._currently_loaded_theme is not None:
             if cls._currently_loaded_theme not in cls._built_in_themes:
-                with open(cls._currently_loaded_theme, "r") as f:
+                with open(cls._currently_loaded_theme) as f:
                     json.dump(cls.theme, f, indent=2)
             else:
                 raise ValueError(f"cannot modify builtin theme '{cls._currently_loaded_theme}'")
         else:
-            raise ValueError(f"cannot save theme, no theme is loaded")
-
-
-
+            raise ValueError("cannot save theme, no theme is loaded")

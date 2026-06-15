@@ -1,6 +1,6 @@
 import tkinter
-import vgkit as vgk
 
+import vgkit as vgk
 
 app = vgk.Window()
 app.geometry("400x900")

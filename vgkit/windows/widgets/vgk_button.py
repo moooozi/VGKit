@@ -1,13 +1,14 @@
-from typing import Union, Tuple, Callable, Optional, Any
 import math
-import tkinter
 import sys
+import tkinter
+from collections.abc import Callable
+from typing import Any
 
-from .core_widget_classes import CTkBaseClass
 from .core_rendering import CTkCanvas, DrawEngine
+from .core_widget_classes import CTkBaseClass
 from .font import CTkFont
 from .theme import ThemeManager
-from .utility import pop_from_dict_by_set, check_kwargs_empty
+from .utility import check_kwargs_empty, pop_from_dict_by_set
 
 
 class VGkButton(CTkBaseClass):
@@ -39,17 +40,17 @@ class VGkButton(CTkBaseClass):
         width: int = 140,
         height: int = 28,
         mode: str = "simple",
-        bg_color: Union[str, Tuple[str, str]] = "transparent",
-        fg_color: Optional[Union[str, Tuple[str, str]]] = None,
-        hover_color: Optional[Union[str, Tuple[str, str]]] = None,
-        text_color: Optional[Union[str, Tuple[str, str]]] = None,
-        text_color_disabled: Optional[Union[str, Tuple[str, str]]] = None,
+        bg_color: str | tuple[str, str] = "transparent",
+        fg_color: str | tuple[str, str] | None = None,
+        hover_color: str | tuple[str, str] | None = None,
+        text_color: str | tuple[str, str] | None = None,
+        text_color_disabled: str | tuple[str, str] | None = None,
         text: str = "VGkButton",
-        font: Optional[Union[tuple, CTkFont]] = None,
-        textvariable: Union[tkinter.Variable, None] = None,
+        font: tuple | CTkFont | None = None,
+        textvariable: tkinter.Variable | None = None,
         state: str = "normal",
         hover: bool = True,
-        command: Union[Callable[[], Any], None] = None,
+        command: Callable[[], Any] | None = None,
         anchor: str = "center",
         style: str = "primary",
         **kwargs,
@@ -89,17 +90,15 @@ class VGkButton(CTkBaseClass):
 
         # ---- text / font ----
         self._text = text
-        self._textvariable: Optional[tkinter.Variable] = textvariable
-        self._font: Union[tuple, CTkFont] = (
-            CTkFont() if font is None else self._check_font_type(font)
-        )
+        self._textvariable: tkinter.Variable | None = textvariable
+        self._font: tuple | CTkFont = CTkFont() if font is None else self._check_font_type(font)
         if isinstance(self._font, CTkFont):
             self._font.add_size_configure_callback(self._update_font)
 
         # ---- interaction ----
         self._state: str = state
         self._hover: bool = hover
-        self._command: Optional[Callable] = command
+        self._command: Callable | None = command
         self._anchor: str = anchor
         self._click_animation_running: bool = False
 
@@ -117,7 +116,7 @@ class VGkButton(CTkBaseClass):
     # ------------------------------------------------------------------
 
     def _get_theme_key_for_style(self) -> str:
-        """ Get the theme key based on button style """
+        """Get the theme key based on button style"""
         if self._style == "secondary":
             # Use CTkSecondaryButton theme if it exists, otherwise fallback to CTkButton
             if "CTkSecondaryButton" in ThemeManager.theme:
@@ -142,9 +141,7 @@ class VGkButton(CTkBaseClass):
             font=self._apply_font_scaling(self._font),
             textvariable=self._textvariable,
         )
-        self._label.configure(
-            **pop_from_dict_by_set(extra_kwargs, self._valid_tk_label_attributes)
-        )
+        self._label.configure(**pop_from_dict_by_set(extra_kwargs, self._valid_tk_label_attributes))
         check_kwargs_empty(extra_kwargs, raise_error=True)
         # Use place instead of pack to respect the parent frame's fixed dimensions
         self._label.place(x=0, y=0, relwidth=1, relheight=1)
@@ -173,10 +170,10 @@ class VGkButton(CTkBaseClass):
         self._draw_engine.set_round_to_even_numbers(True, True)
 
         # Text item id — created lazily in _draw_round
-        self._text_id: Optional[int] = None
+        self._text_id: int | None = None
 
         # textvariable trace for round mode (canvas text has no textvariable)
-        self._textvariable_trace_id: Optional[str] = None
+        self._textvariable_trace_id: str | None = None
         if self._textvariable is not None:
             self._textvariable_trace_id = self._textvariable.trace_add(
                 "write", self._on_textvariable_write
@@ -312,9 +309,7 @@ class VGkButton(CTkBaseClass):
         if self._mode == "simple":
             self._label.configure(font=self._apply_font_scaling(self._font))
         elif self._mode == "round" and self._text_id is not None:
-            self._canvas.itemconfigure(
-                self._text_id, font=self._apply_font_scaling(self._font)
-            )
+            self._canvas.itemconfigure(self._text_id, font=self._apply_font_scaling(self._font))
 
     def _on_textvariable_write(self, *_args):
         """Trace callback — update canvas text when textvariable changes (round mode)."""
@@ -384,9 +379,7 @@ class VGkButton(CTkBaseClass):
 
     def configure(self, require_redraw=False, **kwargs):
         if "fg_color" in kwargs:
-            self._fg_color = self._check_color_type(
-                kwargs.pop("fg_color"), transparency=True
-            )
+            self._fg_color = self._check_color_type(kwargs.pop("fg_color"), transparency=True)
             require_redraw = True
 
         if "hover_color" in kwargs:
@@ -397,9 +390,7 @@ class VGkButton(CTkBaseClass):
             require_redraw = True
 
         if "text_color_disabled" in kwargs:
-            self._text_color_disabled = self._check_color_type(
-                kwargs.pop("text_color_disabled")
-            )
+            self._text_color_disabled = self._check_color_type(kwargs.pop("text_color_disabled"))
             require_redraw = True
 
         if "text" in kwargs:
@@ -456,9 +447,7 @@ class VGkButton(CTkBaseClass):
                 require_redraw = True
 
         if self._mode == "simple":
-            self._label.configure(
-                **pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes)
-            )
+            self._label.configure(**pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes))
 
         super().configure(require_redraw=require_redraw, **kwargs)
 
@@ -487,9 +476,7 @@ class VGkButton(CTkBaseClass):
             return self._command
         elif attribute_name == "anchor":
             return self._anchor
-        elif (
-            attribute_name in self._valid_tk_label_attributes and self._mode == "simple"
-        ):
+        elif attribute_name in self._valid_tk_label_attributes and self._mode == "simple":
             return self._label.cget(attribute_name)
         else:
             return super().cget(attribute_name)

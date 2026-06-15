@@ -1,5 +1,6 @@
-import vgkit as vgk
 import tkinter.ttk as ttk
+
+import vgkit as vgk
 
 app = vgk.Window()
 app.geometry("400x600")

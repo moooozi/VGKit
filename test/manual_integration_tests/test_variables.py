@@ -1,4 +1,5 @@
 import tkinter
+
 import vgkit as vgk
 
 TEST_CONFIGURE = True
@@ -16,9 +17,7 @@ def checkbox_event():
 
 
 txt_var = tkinter.StringVar(value="")
-entry_1 = vgk.Entry(
-    app, width=200, textvariable=txt_var, placeholder_text="placeholder"
-)
+entry_1 = vgk.Entry(app, width=200, textvariable=txt_var, placeholder_text="placeholder")
 entry_1.pack(pady=15)
 txt_var.set("new text test")
 if TEST_CONFIGURE:
@@ -86,9 +85,7 @@ if TEST_REMOVING:
 
 print("check 1 created")
 
-check_2 = vgk.CheckBox(
-    app, text="check 2", variable=check_var, onvalue="on", offvalue="off"
-)
+check_2 = vgk.CheckBox(app, text="check 2", variable=check_var, onvalue="on", offvalue="off")
 check_2.pack(pady=15)
 if TEST_CONFIGURE:
     check_2.configure(variable=check_var)
@@ -114,9 +111,7 @@ switch_1 = vgk.Switch(
     command=switch_event,
 )
 switch_1.pack(pady=20, padx=10)
-switch_2 = vgk.Switch(
-    master=app, variable=s_var, textvariable=s_var, onvalue="on", offvalue="off"
-)
+switch_2 = vgk.Switch(master=app, variable=s_var, textvariable=s_var, onvalue="on", offvalue="off")
 switch_2.pack(pady=20, padx=10)
 
 optionmenu_var = tkinter.StringVar(value="test")

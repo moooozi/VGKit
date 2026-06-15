@@ -1,8 +1,8 @@
-import sys
-import warnings
 import tkinter
 import tkinter.ttk as ttk
-from typing import Union, Callable, Tuple, Any
+import warnings
+from collections.abc import Callable
+from typing import Any
 
 try:
     from typing import TypedDict
@@ -10,14 +10,12 @@ except ImportError:
     from typing_extensions import TypedDict
 
 from .... import windows  # import windows for isinstance checks
-
-from ..theme import ThemeManager
+from ..appearance_mode import CTkAppearanceModeBaseClass
 from ..font import CTkFont
 from ..image import CTkImage
-from ..appearance_mode import CTkAppearanceModeBaseClass
 from ..scaling import CTkScalingBaseClass
-
-from ..utility import pop_from_dict_by_set, check_kwargs_empty
+from ..theme import ThemeManager
+from ..utility import check_kwargs_empty, pop_from_dict_by_set
 
 
 class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClass):
@@ -35,7 +33,7 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
         master: Any,
         width: int = 0,
         height: int = 0,
-        bg_color: Union[str, Tuple[str, str]] = "transparent",
+        bg_color: str | tuple[str, str] = "transparent",
         **kwargs,
     ):
 
@@ -72,10 +70,10 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
             function: Callable
             kwargs: dict
 
-        self._last_geometry_manager_call: Union[GeometryCallDict, None] = None
+        self._last_geometry_manager_call: GeometryCallDict | None = None
 
         # background color
-        self._bg_color: Union[str, Tuple[str, str]] = (
+        self._bg_color: str | tuple[str, str] = (
             self._detect_color_of_master()
             if bg_color == "transparent"
             else self._check_color_type(bg_color, transparency=True)
@@ -150,9 +148,7 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
             self._set_dimensions(height=kwargs.pop("height"))
 
         if "bg_color" in kwargs:
-            new_bg_color = self._check_color_type(
-                kwargs.pop("bg_color"), transparency=True
-            )
+            new_bg_color = self._check_color_type(kwargs.pop("bg_color"), transparency=True)
             if new_bg_color == "transparent":
                 self._bg_color = self._detect_color_of_master()
             else:
@@ -203,10 +199,10 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
         else:
             raise ValueError(
                 f"Wrong font type {type(font)}\n"
-                + f"For consistency, vgkit requires the font argument to be a tuple of len 2 to 6 or an instance of CTkFont.\n"
-                + f"\nUsage example:\n"
-                + f"font=vgkit.CTkFont(family='<name>', size=<size in px>)\n"
-                + f"font=('<name>', <size in px>)\n"
+                + "For consistency, vgkit requires the font argument to be a tuple of len 2 to 6 or an instance of CTkFont.\n"
+                + "\nUsage example:\n"
+                + "font=vgkit.CTkFont(family='<name>', size=<size in px>)\n"
+                + "font=('<name>', <size in px>)\n"
             )
 
     def _check_image_type(self, image: any):
@@ -223,11 +219,9 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
 
     def _update_dimensions_event(self, event):
         # only redraw if dimensions changed (for performance), independent of scaling
-        if round(self._current_width) != round(
-            self._reverse_widget_scaling(event.width)
-        ) or round(self._current_height) != round(
-            self._reverse_widget_scaling(event.height)
-        ):
+        if round(self._current_width) != round(self._reverse_widget_scaling(event.width)) or round(
+            self._current_height
+        ) != round(self._reverse_widget_scaling(event.height)):
             self._current_width = self._reverse_widget_scaling(
                 event.width
             )  # adjust current size according to new size given by event
@@ -237,9 +231,7 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
 
             self._draw(no_color_updates=True)  # faster drawing without color changes
 
-    def _detect_color_of_master(
-        self, master_widget=None
-    ) -> Union[str, Tuple[str, str]]:
+    def _detect_color_of_master(self, master_widget=None) -> str | tuple[str, str]:
         """detect foreground color of master widget for bg_color and transparent color"""
 
         if master_widget is None:
@@ -260,9 +252,7 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
             ):
                 return master_widget.cget("fg_color")
 
-            elif isinstance(
-                master_widget, windows.widgets.ctk_scrollable_frame.CTkScrollableFrame
-            ):
+            elif isinstance(master_widget, windows.widgets.ctk_scrollable_frame.CTkScrollableFrame):
                 return self._detect_color_of_master(master_widget.master.master.master)
 
             # if fg_color of master is None, try to retrieve fg_color from master of master
@@ -298,9 +288,7 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
 
         if self._last_geometry_manager_call is not None:
             self._last_geometry_manager_call["function"](
-                **self._apply_argument_scaling(
-                    self._last_geometry_manager_call["kwargs"]
-                )
+                **self._apply_argument_scaling(self._last_geometry_manager_call["kwargs"])
             )
 
     def _set_dimensions(self, width=None, height=None):
@@ -326,9 +314,7 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
         )
 
     def bind_all(self, sequence=None, func=None, add=None):
-        raise AttributeError(
-            "'bind_all' is not allowed, could result in undefined behavior"
-        )
+        raise AttributeError("'bind_all' is not allowed, could result in undefined behavior")
 
     def place(self, **kwargs):
         """

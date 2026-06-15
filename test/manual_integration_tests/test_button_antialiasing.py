@@ -33,7 +33,7 @@ for i in range(0, 16, 1):
         corner_radius=i,
         height=30,
         border_width=1,
-        text=f"{i} {i-1}",
+        text=f"{i} {i - 1}",
         border_color="white",
         fg_color=None,
         text_color="white",
@@ -41,9 +41,7 @@ for i in range(0, 16, 1):
     # b = tkinter.Button(f1,  text=f"{i} {i-2}", width=20)
     b.grid(row=i, column=0, pady=5, padx=15, sticky="nsew")
 
-    b = vgk.Button(
-        f2, corner_radius=i, height=30, border_width=0, text=f"{i}", fg_color="#228da8"
-    )
+    b = vgk.Button(f2, corner_radius=i, height=30, border_width=0, text=f"{i}", fg_color="#228da8")
     b.grid(row=i, column=0, pady=5, padx=15, sticky="nsew")
 
     b = vgk.Button(
@@ -51,7 +49,7 @@ for i in range(0, 16, 1):
         corner_radius=i,
         height=30,
         border_width=1,
-        text=f"{i} {i-1}",
+        text=f"{i} {i - 1}",
         fg_color=None,
         border_color="gray20",
         text_color="black",

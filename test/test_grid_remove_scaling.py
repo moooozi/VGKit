@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -31,9 +31,7 @@ def test_grid_remove_scaling():
     root.update()
 
     # Check that it's still not mapped
-    assert (
-        not label.winfo_ismapped()
-    ), "Label should still not be mapped after scaling change"
+    assert not label.winfo_ismapped(), "Label should still not be mapped after scaling change"
 
     # Re-grid it
     label.grid(row=0, column=0, padx=20, pady=20)

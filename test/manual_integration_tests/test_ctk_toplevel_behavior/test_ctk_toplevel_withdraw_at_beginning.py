@@ -10,6 +10,3 @@ toplevel.withdraw()
 toplevel.after(2000, toplevel.deiconify)
 
 app.mainloop()
-
-
-

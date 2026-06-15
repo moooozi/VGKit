@@ -1,12 +1,11 @@
-import tkinter
 import threading
-from typing import Callable
+import tkinter
+from collections.abc import Callable
 
 import darkdetect
 
 
 class AppearanceModeTracker:
-
     callback_list = []
     app_list = []
 

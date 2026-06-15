@@ -1,5 +1,5 @@
-import tkinter.ttk as ttk
 import tkinter
+import tkinter.ttk as ttk
 
 app = tkinter.Tk()
 app.geometry("400x350")
@@ -25,9 +25,7 @@ frame_1.pack(padx=60, pady=20, fill="both", expand=True)
 label_1 = tkinter.Label(master=frame_1, text="Label", bg="lightgray")
 label_1.pack(pady=y_padding, padx=10)
 
-progressbar_1 = ttk.Progressbar(
-    master=frame_1, style="black.Horizontal.TProgressbar", length=150
-)
+progressbar_1 = ttk.Progressbar(master=frame_1, style="black.Horizontal.TProgressbar", length=150)
 progressbar_1.pack(pady=y_padding, padx=10)
 progressbar_1["value"] = 50
 
@@ -51,9 +49,7 @@ slider_1.pack(pady=y_padding, padx=10)
 entry_1 = tkinter.Entry(master=frame_1, highlightbackground="lightgray", width=10)
 entry_1.pack(pady=y_padding, padx=10)
 
-checkbox_1 = tkinter.Checkbutton(
-    master=frame_1, bg=frame_1.cget("bg"), text="CheckButton"
-)
+checkbox_1 = tkinter.Checkbutton(master=frame_1, bg=frame_1.cget("bg"), text="CheckButton")
 checkbox_1.pack(pady=y_padding, padx=10)
 
 radiobutton_var = tkinter.IntVar()

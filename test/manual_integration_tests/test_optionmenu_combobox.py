@@ -1,5 +1,6 @@
 import tkinter
 import tkinter.ttk as ttk
+
 import vgkit as vgk
 
 app = vgk.Window()
@@ -26,9 +27,7 @@ variable.set("test")
 optionmenu_tk = tkinter.OptionMenu(app, variable, *countries, command=select_callback)
 optionmenu_tk.pack(pady=10, padx=10)
 
-optionmenu_1 = vgk.OptionMenu(
-    app, variable=variable, values=countries, command=select_callback
-)
+optionmenu_1 = vgk.OptionMenu(app, variable=variable, values=countries, command=select_callback)
 optionmenu_1.pack(pady=20, padx=10)
 
 optionmenu_2 = vgk.OptionMenu(

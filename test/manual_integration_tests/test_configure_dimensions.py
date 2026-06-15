@@ -1,6 +1,6 @@
-import vgkit as vgk
 import random
 
+import vgkit as vgk
 
 app = vgk.Window()
 app.geometry("400x400")
@@ -11,9 +11,7 @@ def button_callback():
     frame_1.configure(width=random.randint(30, 200), height=random.randint(30, 200))
     label_1.configure(width=random.randint(30, 200), height=random.randint(30, 40))
     entry_1.configure(width=random.randint(30, 200), height=random.randint(30, 40))
-    progressbar_1.configure(
-        width=random.randint(30, 200), height=random.randint(10, 16)
-    )
+    progressbar_1.configure(width=random.randint(30, 200), height=random.randint(10, 16))
     slider_1.configure(width=random.randint(30, 200), height=random.randint(14, 20))
 
 

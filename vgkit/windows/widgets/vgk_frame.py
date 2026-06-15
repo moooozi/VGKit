@@ -1,5 +1,5 @@
 import tkinter
-from typing import Union, Tuple, Any
+from typing import Any
 
 from .core_widget_classes import CTkBaseClass
 
@@ -15,13 +15,11 @@ class VGkFrame(CTkBaseClass):
         master: Any,
         width: int = 200,
         height: int = 200,
-        bg_color: Union[str, Tuple[str, str]] = "transparent",
-        **kwargs
+        bg_color: str | tuple[str, str] = "transparent",
+        **kwargs,
     ):
         # Initialize as a simple frame without canvas
-        super().__init__(
-            master=master, width=width, height=height, bg_color=bg_color, **kwargs
-        )
+        super().__init__(master=master, width=width, height=height, bg_color=bg_color, **kwargs)
 
         # Set fg_color to transparent to avoid any drawing
         self._fg_color = "transparent"
@@ -35,6 +33,4 @@ class VGkFrame(CTkBaseClass):
         super()._draw(no_color_updates)
 
         if no_color_updates is False:
-            tkinter.Frame.configure(
-                self, bg=self._apply_appearance_mode(self._bg_color)
-            )
+            tkinter.Frame.configure(self, bg=self._apply_appearance_mode(self._bg_color))

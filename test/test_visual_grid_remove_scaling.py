@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
@@ -50,14 +50,10 @@ def test_visual_grid_remove_scaling():
         update_status()
 
     # Buttons
-    remove_button = vgk.Button(
-        root, text="Grid Remove Label", command=grid_remove_label
-    )
+    remove_button = vgk.Button(root, text="Grid Remove Label", command=grid_remove_label)
     remove_button.grid(row=2, column=0, pady=10)
 
-    scaling_button = vgk.Button(
-        root, text="Change Scaling (current: 1.0)", command=change_scaling
-    )
+    scaling_button = vgk.Button(root, text="Change Scaling (current: 1.0)", command=change_scaling)
     scaling_button.grid(row=3, column=0, pady=10)
 
     regrid_button = vgk.Button(root, text="Re-grid Label", command=regrid_label)

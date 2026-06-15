@@ -10,6 +10,3 @@ if sys.platform == "darwin":
     DrawEngine.preferred_drawing_method = "polygon_shapes"
 else:
     DrawEngine.preferred_drawing_method = "font_shapes"
-
-
-

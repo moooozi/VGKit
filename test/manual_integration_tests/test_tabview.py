@@ -28,9 +28,7 @@ tabview_1.configure(state="normal")
 
 for i in range(10):
     for j in range(30):
-        button = vgk.Button(
-            tabview_1.tab("tab 1"), height=10, width=30, font=vgk.Font(size=8)
-        )
+        button = vgk.Button(tabview_1.tab("tab 1"), height=10, width=30, font=vgk.Font(size=8))
         button.grid(row=j, column=i, padx=2, pady=2)
 
 app.mainloop()

@@ -1,11 +1,10 @@
-import enum
-import tkinter
-import sys
-from typing import Callable, Dict, List, Set
 import ctypes
-from ctypes import wintypes, WINFUNCTYPE, pythonapi, py_object
+import enum
+import sys
 import threading
-
+import tkinter
+from collections.abc import Callable
+from ctypes import WINFUNCTYPE, wintypes
 
 # Win32 subclass setup
 comctl32 = ctypes.WinDLL("comctl32.dll")
@@ -38,7 +37,7 @@ SUBCLASSPROC = WINFUNCTYPE(
 
 # Thread-safe set for pending DPI changes (accessed from subclass proc without GIL)
 _pending_dpi_changes_lock = threading.Lock()
-_pending_dpi_changes: Set[int] = set()
+_pending_dpi_changes: set[int] = set()
 
 
 def subclass_proc(hwnd, msg, wparam, lparam, uid, refdata):
@@ -88,19 +87,19 @@ class DeviceCapsIndex(enum.Enum):
 class ScalingTracker:
     deactivate_automatic_dpi_awareness = False
 
-    window_widgets_dict: Dict[object, List[Callable]] = (
-        {}
-    )  # contains window objects as keys with list of widget callbacks as elements
-    window_dpi_scaling_dict: Dict[object, float] = (
-        {}
-    )  # contains window objects as keys and corresponding scaling factors
+    window_widgets_dict: dict[
+        object, list[Callable]
+    ] = {}  # contains window objects as keys with list of widget callbacks as elements
+    window_dpi_scaling_dict: dict[
+        object, float
+    ] = {}  # contains window objects as keys and corresponding scaling factors
 
     widget_scaling = 1.0  # user values which multiply to detected window scaling factor
     window_scaling = 1.0
 
     dpi_awareness_activated = False
-    hwnd_to_window: Dict[int, object] = {}
-    subclass_procs: Dict[int, object] = {}
+    hwnd_to_window: dict[int, object] = {}
+    subclass_procs: dict[int, object] = {}
     _dpi_poll_running = False
 
     @classmethod
@@ -141,7 +140,11 @@ class ScalingTracker:
         if sys.platform.startswith("win"):
             try:
                 hwnd = wintypes.HWND(window.winfo_id())
-                hwnd_val = int(hwnd) if hasattr(hwnd, '__int__') else (hwnd.value if hasattr(hwnd, 'value') else hwnd)
+                hwnd_val = (
+                    int(hwnd)
+                    if hasattr(hwnd, "__int__")
+                    else (hwnd.value if hasattr(hwnd, "value") else hwnd)
+                )
                 if hwnd_val not in cls.subclass_procs:
                     cls.hwnd_to_window[hwnd_val] = window
                     proc = SUBCLASSPROC(subclass_proc)
@@ -181,17 +184,17 @@ class ScalingTracker:
     def _poll_dpi_changes(cls):
         """Periodic poll to process DPI changes signaled by subclass proc. Runs on main thread with GIL."""
         global _pending_dpi_changes, _pending_dpi_changes_lock
-        
+
         if not cls._dpi_poll_running:
             return
-        
+
         # Get pending changes in a thread-safe way
         pending_hwnds = []
         with _pending_dpi_changes_lock:
             if _pending_dpi_changes:
                 pending_hwnds = list(_pending_dpi_changes)
                 _pending_dpi_changes.clear()
-        
+
         # Process each pending DPI change
         for hwnd_val in pending_hwnds:
             window = cls.hwnd_to_window.get(hwnd_val)
@@ -203,7 +206,7 @@ class ScalingTracker:
                         cls._apply_dpi_scaling(window, new_scaling)
                 except Exception:
                     pass
-        
+
         # Schedule next poll if we still have windows
         if cls.window_widgets_dict:
             # Get any window to schedule on
@@ -237,9 +240,7 @@ class ScalingTracker:
             cls.window_widgets_dict[window_root].append(widget_callback)
 
         if window_root not in cls.window_dpi_scaling_dict:
-            cls.window_dpi_scaling_dict[window_root] = cls.get_window_dpi_scaling(
-                window_root
-            )
+            cls.window_dpi_scaling_dict[window_root] = cls.get_window_dpi_scaling(window_root)
 
     @classmethod
     def remove_widget(cls, widget_callback, widget):
@@ -258,7 +259,11 @@ class ScalingTracker:
         if sys.platform.startswith("win"):
             try:
                 hwnd = wintypes.HWND(window.winfo_id())
-                hwnd_val = int(hwnd) if hasattr(hwnd, '__int__') else (hwnd.value if hasattr(hwnd, 'value') else hwnd)
+                hwnd_val = (
+                    int(hwnd)
+                    if hasattr(hwnd, "__int__")
+                    else (hwnd.value if hasattr(hwnd, "value") else hwnd)
+                )
                 if hwnd_val in cls.subclass_procs:
                     comctl32.RemoveWindowSubclass(hwnd, cls.subclass_procs[hwnd_val], 1)
                     del cls.subclass_procs[hwnd_val]
@@ -329,12 +334,10 @@ class ScalingTracker:
                 return 1  # scaling works automatically on macOS
 
             elif sys.platform.startswith("win"):
-                from ctypes import windll, pointer, wintypes
+                from ctypes import pointer, windll, wintypes
 
                 DPI100pc = 96  # DPI 96 is 100% scaling
-                DPI_type = (
-                    0  # MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2
-                )
+                DPI_type = 0  # MDT_EFFECTIVE_DPI = 0, MDT_ANGULAR_DPI = 1, MDT_RAW_DPI = 2
                 window_hwnd = wintypes.HWND(window.winfo_id())
                 monitor_handle = windll.user32.MonitorFromWindow(
                     window_hwnd, wintypes.DWORD(2)

@@ -1,4 +1,5 @@
 import tkinter
+
 import vgkit as vgk
 
 vgk.set_appearance_mode("System")  # Other: "Dark", "Light"
@@ -97,9 +98,7 @@ class TestApp(vgk.Window):
         """gets called by self.slider_3"""
 
         def rgb2hex(rgb_color: tuple) -> str:
-            return "#{:02x}{:02x}{:02x}".format(
-                round(rgb_color[0]), round(rgb_color[1]), round(rgb_color[2])
-            )
+            return f"#{round(rgb_color[0]):02x}{round(rgb_color[1]):02x}{round(rgb_color[2]):02x}"
 
         col_1 = rgb2hex((100, 50, value * 250))
         col_2 = rgb2hex((20, value * 250, 50))
@@ -123,13 +122,9 @@ class TestApp(vgk.Window):
             font=("times", 16),
         )
         self.label_3.place(relx=0.5, y=y, anchor=tkinter.CENTER)
-        self.label_3.configure(
-            fg_color=("#F4F4FA", "#333D5E"), text_color=("#373E57", "#7992C1")
-        )
+        self.label_3.configure(fg_color=("#F4F4FA", "#333D5E"), text_color=("#373E57", "#7992C1"))
 
-        self.frame_3 = vgk.Container(
-            master=self.ctk_frame_customized, width=200, height=60
-        )
+        self.frame_3 = vgk.Container(master=self.ctk_frame_customized, width=200, height=60)
         self.frame_3.place(relx=0.5, y=y + 80, anchor=tkinter.CENTER)
         self.frame_3.configure(fg_color=("#EBECF3", "#4B577E"))
 
@@ -183,22 +178,16 @@ class TestApp(vgk.Window):
     def create_widgets_on_tk_frame_customized(self):
         x, y = 1150, 40
 
-        self.tk_frame_customized = tkinter.Frame(
-            master=self, width=300, height=600, bg="darkred"
-        )
+        self.tk_frame_customized = tkinter.Frame(master=self, width=300, height=600, bg="darkred")
         self.tk_frame_customized.place(x=x, y=y, anchor=tkinter.N)
 
         self.label_4 = vgk.Label(
             master=self.tk_frame_customized, text="customized", corner_radius=6
         )
         self.label_4.place(relx=0.5, y=y, anchor=tkinter.CENTER)
-        self.label_4.configure(
-            fg_color=("#F4F4FA", "#333D5E"), text_color=("#373E57", "#7992C1")
-        )
+        self.label_4.configure(fg_color=("#F4F4FA", "#333D5E"), text_color=("#373E57", "#7992C1"))
 
-        self.frame_4 = vgk.Container(
-            master=self.tk_frame_customized, width=200, height=60
-        )
+        self.frame_4 = vgk.Container(master=self.tk_frame_customized, width=200, height=60)
         self.frame_4.place(relx=0.5, y=y + 80, anchor=tkinter.CENTER)
         self.frame_4.configure(fg_color=("#EBECF3", "#4B577E"))
 

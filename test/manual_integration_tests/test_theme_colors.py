@@ -1,4 +1,5 @@
 import tkinter
+
 import vgkit as vgk
 
 vgk.set_appearance_mode("dark")  # Modes: "System" (standard), "Dark", "Light"
@@ -47,14 +48,10 @@ def create_all_widgets(master, state="normal"):
 
     radiobutton_var = tkinter.IntVar(value=1)
 
-    radiobutton_1 = vgk.RadioButton(
-        master=master, variable=radiobutton_var, value=1, state=state
-    )
+    radiobutton_1 = vgk.RadioButton(master=master, variable=radiobutton_var, value=1, state=state)
     radiobutton_1.pack(pady=10, padx=10)
 
-    radiobutton_2 = vgk.RadioButton(
-        master=master, variable=radiobutton_var, value=2, state=state
-    )
+    radiobutton_2 = vgk.RadioButton(master=master, variable=radiobutton_var, value=2, state=state)
     radiobutton_2.pack(pady=10, padx=10)
 
     switch_1 = vgk.Switch(master=master, state=state)
@@ -69,9 +66,7 @@ def create_all_widgets(master, state="normal"):
     )
     segmented_button_1.pack(pady=10, padx=10)
 
-    tabview_1 = vgk.Tabview(
-        master=master, width=200, height=100, state=state, border_width=2
-    )
+    tabview_1 = vgk.Tabview(master=master, width=200, height=100, state=state, border_width=2)
     tabview_1.pack(pady=10, padx=10)
     tabview_1.add("CTkTabview")
     tabview_1.add("Tab 2")

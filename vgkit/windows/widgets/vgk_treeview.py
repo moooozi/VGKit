@@ -1,11 +1,11 @@
 import tkinter.ttk as ttk
 
 from .ctk_frame import CTkFrame as Container
-from .vgk_frame import VGkFrame as Frame
-from .vgk_label import VGkLabel as Label
 from .ctk_scrollbar import CTkScrollbar as Scrollbar
 from .font import CTkFont as Font
 from .theme import ThemeManager
+from .vgk_frame import VGkFrame as Frame
+from .vgk_label import VGkLabel as Label
 
 
 class TreeView(Container):
@@ -122,12 +122,8 @@ class TreeView(Container):
     def _update_appearance(self):
         # Apply CTk theme colors and scaling
         bg_color = self._apply_appearance_mode(self.cget("fg_color"))
-        text_color = self._apply_appearance_mode(
-            ThemeManager.theme["CTkLabel"]["text_color"]
-        )
-        selected_color = self._apply_appearance_mode(
-            ThemeManager.theme["CTkButton"]["fg_color"]
-        )
+        text_color = self._apply_appearance_mode(ThemeManager.theme["CTkLabel"]["text_color"])
+        selected_color = self._apply_appearance_mode(ThemeManager.theme["CTkButton"]["fg_color"])
 
         base_font = Font(size=14)
         scaled_font = self._apply_font_scaling(base_font)

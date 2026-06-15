@@ -7,6 +7,3 @@ app.iconify()
 app.after(2000, app.deiconify)
 
 app.mainloop()
-
-
-

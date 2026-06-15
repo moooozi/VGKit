@@ -1,5 +1,6 @@
-import vgkit as vgk
 import sys
+
+import vgkit as vgk
 
 vgk.set_appearance_mode("dark")
 
@@ -30,6 +31,3 @@ button_1 = vgk.Button(app, text="start test", command=change_appearance_mode)
 button_1.pack(pady=20, padx=20)
 
 app.mainloop()
-
-
-

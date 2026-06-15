@@ -1,10 +1,10 @@
-from typing import Union, Tuple, Optional, Any
 import tkinter
+from typing import Any
 
 from .core_widget_classes import CTkBaseClass
 from .font import CTkFont
 from .theme import ThemeManager
-from .utility import pop_from_dict_by_set, check_kwargs_empty
+from .utility import check_kwargs_empty, pop_from_dict_by_set
 
 
 class VGkLabel(CTkBaseClass):
@@ -30,12 +30,12 @@ class VGkLabel(CTkBaseClass):
         master: Any,
         width: int = 0,
         height: int = 28,
-        bg_color: Union[str, Tuple[str, str]] = "transparent",
-        text_color: Optional[Union[str, Tuple[str, str]]] = None,
+        bg_color: str | tuple[str, str] = "transparent",
+        text_color: str | tuple[str, str] | None = None,
         text: str = "CTkSimpleLabel",
-        font: Optional[Union[tuple, CTkFont]] = None,
+        font: tuple | CTkFont | None = None,
         anchor: str = "center",
-        wraplength: Union[int, str] = "master",
+        wraplength: int | str = "master",
         **kwargs,
     ):
 
@@ -72,9 +72,7 @@ class VGkLabel(CTkBaseClass):
             fg=self._apply_appearance_mode(self._text_color),
             bg=self._apply_appearance_mode(self._bg_color),
         )
-        self._label.configure(
-            **pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes)
-        )
+        self._label.configure(**pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes))
 
         check_kwargs_empty(kwargs, raise_error=True)
 
@@ -115,9 +113,7 @@ class VGkLabel(CTkBaseClass):
                 raise ValueError(f"Invalid wraplength: {self._wraplength}")
             self._label.configure(wraplength=width)
         else:
-            self._label.configure(
-                wraplength=self._apply_widget_scaling(self._wraplength)
-            )
+            self._label.configure(wraplength=self._apply_widget_scaling(self._wraplength))
 
     def destroy(self):
         if isinstance(self._font, CTkFont):
@@ -163,9 +159,7 @@ class VGkLabel(CTkBaseClass):
             self._wraplength = wl
             self._update_wraplength()
 
-        self._label.configure(
-            **pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes)
-        )
+        self._label.configure(**pop_from_dict_by_set(kwargs, self._valid_tk_label_attributes))
         super().configure(require_redraw=require_redraw, **kwargs)
 
     def cget(self, attribute_name: str) -> Any:
@@ -191,7 +185,7 @@ class VGkLabel(CTkBaseClass):
             )
         self._label.bind(sequence, command, add=True)
 
-    def unbind(self, sequence: str = None, funcid: Optional[str] = None):
+    def unbind(self, sequence: str = None, funcid: str | None = None):
         if funcid is not None:
             raise ValueError("'funcid' argument can only be None")
         self._label.unbind(sequence, None)

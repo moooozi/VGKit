@@ -1,13 +1,13 @@
-from typing import Union, Tuple
 import copy
 import re
+
 try:
     from typing import Literal
 except ImportError:
-    from typing_extensions import Literal
+    from typing import Literal
 
-from .scaling_tracker import ScalingTracker
 from ..font import CTkFont
+from .scaling_tracker import ScalingTracker
 
 
 class CTkScalingBaseClass:
@@ -29,15 +29,20 @@ class CTkScalingBaseClass:
     - _parse_geometry_string()
 
     """
+
     def __init__(self, scaling_type: Literal["widget", "window"] = "widget"):
         self.__scaling_type = scaling_type
 
         if self.__scaling_type == "widget":
-            ScalingTracker.add_widget(self._set_scaling, self)  # add callback for automatic scaling changes
+            ScalingTracker.add_widget(
+                self._set_scaling, self
+            )  # add callback for automatic scaling changes
             self.__widget_scaling = ScalingTracker.get_widget_scaling(self)
         elif self.__scaling_type == "window":
             ScalingTracker.activate_high_dpi_awareness()  # make process DPI aware
-            ScalingTracker.add_window(self._set_scaling, self)  # add callback for automatic scaling changes
+            ScalingTracker.add_window(
+                self._set_scaling, self
+            )  # add callback for automatic scaling changes
             self.__window_scaling = ScalingTracker.get_window_scaling(self)
 
     def destroy(self):
@@ -47,7 +52,7 @@ class CTkScalingBaseClass:
             ScalingTracker.remove_window(self._set_scaling, self)
 
     def _set_scaling(self, new_widget_scaling, new_window_scaling):
-        """ can be overridden, but super method must be called at the beginning """
+        """can be overridden, but super method must be called at the beginning"""
         self.__widget_scaling = new_widget_scaling
         self.__window_scaling = new_window_scaling
 
@@ -57,24 +62,24 @@ class CTkScalingBaseClass:
     def _get_window_scaling(self) -> float:
         return self.__window_scaling
 
-    def _apply_widget_scaling(self, value: Union[int, float]) -> Union[float]:
+    def _apply_widget_scaling(self, value: int | float) -> float:
         assert self.__scaling_type == "widget"
         return value * self.__widget_scaling
 
-    def _reverse_widget_scaling(self, value: Union[int, float]) -> Union[float]:
+    def _reverse_widget_scaling(self, value: int | float) -> float:
         assert self.__scaling_type == "widget"
         return value / self.__widget_scaling
 
-    def _apply_window_scaling(self, value: Union[int, float]) -> int:
+    def _apply_window_scaling(self, value: int | float) -> int:
         assert self.__scaling_type == "window"
         return int(value * self.__window_scaling)
 
-    def _reverse_window_scaling(self, scaled_value: Union[int, float]) -> int:
+    def _reverse_window_scaling(self, scaled_value: int | float) -> int:
         assert self.__scaling_type == "window"
         return int(scaled_value / self.__window_scaling)
 
-    def _apply_font_scaling(self, font: Union[Tuple, CTkFont]) -> tuple:
-        """ Takes CTkFont object and returns tuple font with scaled size, has to be called again for every change of font object """
+    def _apply_font_scaling(self, font: tuple | CTkFont) -> tuple:
+        """Takes CTkFont object and returns tuple font with scaled size, has to be called again for every change of font object"""
         assert self.__scaling_type == "widget"
 
         if type(font) == tuple:
@@ -85,12 +90,16 @@ class CTkScalingBaseClass:
             elif 3 <= len(font) <= 6:
                 return font[0], -abs(round(font[1] * self.__widget_scaling)), font[2:]
             else:
-                raise ValueError(f"Can not scale font {font}. font needs to be tuple of len 1, 2 or 3")
+                raise ValueError(
+                    f"Can not scale font {font}. font needs to be tuple of len 1, 2 or 3"
+                )
 
         elif isinstance(font, CTkFont):
             return font.create_scaled_tuple(self.__widget_scaling)
         else:
-            raise ValueError(f"Can not scale font '{font}' of type {type(font)}. font needs to be tuple or instance of CTkFont")
+            raise ValueError(
+                f"Can not scale font '{font}' of type {type(font)}. font needs to be tuple or instance of CTkFont"
+            )
 
     def _apply_argument_scaling(self, kwargs: dict) -> dict:
         assert self.__scaling_type == "widget"
@@ -102,12 +111,16 @@ class CTkScalingBaseClass:
             if isinstance(scaled_kwargs["pady"], (int, float)):
                 scaled_kwargs["pady"] = self._apply_widget_scaling(scaled_kwargs["pady"])
             elif isinstance(scaled_kwargs["pady"], tuple):
-                scaled_kwargs["pady"] = tuple([self._apply_widget_scaling(v) for v in scaled_kwargs["pady"]])
+                scaled_kwargs["pady"] = tuple(
+                    [self._apply_widget_scaling(v) for v in scaled_kwargs["pady"]]
+                )
         if "padx" in kwargs:
             if isinstance(scaled_kwargs["padx"], (int, float)):
                 scaled_kwargs["padx"] = self._apply_widget_scaling(scaled_kwargs["padx"])
             elif isinstance(scaled_kwargs["padx"], tuple):
-                scaled_kwargs["padx"] = tuple([self._apply_widget_scaling(v) for v in scaled_kwargs["padx"]])
+                scaled_kwargs["padx"] = tuple(
+                    [self._apply_widget_scaling(v) for v in scaled_kwargs["padx"]]
+                )
 
         # scaled x, y values for place geometry manager
         if "x" in scaled_kwargs:
@@ -121,7 +134,9 @@ class CTkScalingBaseClass:
     def _parse_geometry_string(geometry_string: str) -> tuple:
         #                 index:   1                   2           3          4             5       6
         # regex group structure: ('<width>x<height>', '<width>', '<height>', '+-<x>+-<y>', '-<x>', '-<y>')
-        result = re.search(r"((\d+)x(\d+)){0,1}(\+{0,1}([+-]{0,1}\d+)\+{0,1}([+-]{0,1}\d+)){0,1}", geometry_string)
+        result = re.search(
+            r"((\d+)x(\d+)){0,1}(\+{0,1}([+-]{0,1}\d+)\+{0,1}([+-]{0,1}\d+)){0,1}", geometry_string
+        )
 
         width = int(result.group(2)) if result.group(2) is not None else None
         height = int(result.group(3)) if result.group(3) is not None else None
@@ -157,6 +172,3 @@ class CTkScalingBaseClass:
 
         else:
             return f"{round(width / self.__window_scaling)}x{round(height / self.__window_scaling)}+{x}+{y}"
-
-
-

@@ -31,9 +31,7 @@ class App(vgk.Window):
         self.geometry("500x400")
         self.resizable(False, False)
 
-        self.button_1 = vgk.Button(
-            self, text="Open CTkToplevel", command=self.open_toplevel
-        )
+        self.button_1 = vgk.Button(self, text="Open CTkToplevel", command=self.open_toplevel)
         self.button_1.pack(side="top", padx=40, pady=40)
         self.button_2 = vgk.Button(
             self,
@@ -49,12 +47,8 @@ class App(vgk.Window):
         self.toplevel_window = None
 
     def open_toplevel(self):
-        if (
-            self.toplevel_window is None
-        ):  # create toplevel window only if not already open
-            self.toplevel_window = ToplevelWindow(
-                self, closing_event=self.toplevel_close_event
-            )
+        if self.toplevel_window is None:  # create toplevel window only if not already open
+            self.toplevel_window = ToplevelWindow(self, closing_event=self.toplevel_close_event)
 
     def toplevel_close_event(self):
         self.toplevel_window = None

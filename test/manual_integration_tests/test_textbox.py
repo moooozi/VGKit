@@ -123,9 +123,7 @@ textbox_3.insert(
     * 20,
 )
 
-textbox_3 = vgk.Textbox(
-    frame_3, corner_radius=10, border_width=2, activate_scrollbars=False
-)
+textbox_3 = vgk.Textbox(frame_3, corner_radius=10, border_width=2, activate_scrollbars=False)
 textbox_3.grid(row=1, column=0, sticky="nsew", padx=20, pady=20)
 textbox_3.insert(
     "0.0",
@@ -133,9 +131,7 @@ textbox_3.insert(
     * 20,
 )
 
-textbox_3 = vgk.Textbox(
-    frame_3, corner_radius=0, border_width=2, activate_scrollbars=False
-)
+textbox_3 = vgk.Textbox(frame_3, corner_radius=0, border_width=2, activate_scrollbars=False)
 textbox_3.grid(row=2, column=0, sticky="nsew", padx=20, pady=20)
 textbox_3.insert(
     "0.0",
@@ -143,9 +139,7 @@ textbox_3.insert(
     * 20,
 )
 
-textbox_3 = vgk.Textbox(
-    frame_3, corner_radius=0, border_width=2, activate_scrollbars=False
-)
+textbox_3 = vgk.Textbox(frame_3, corner_radius=0, border_width=2, activate_scrollbars=False)
 textbox_3.grid(row=3, column=0, sticky="nsew", padx=20, pady=20)
 textbox_3.insert(
     "0.0",

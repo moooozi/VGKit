@@ -1,16 +1,16 @@
-import tkinter
-from packaging import version
-import sys
+import ctypes
 import os
 import platform
-import ctypes
-from typing import Union, Tuple, Optional
+import sys
+import tkinter
 
-from .widgets.theme import ThemeManager
-from .widgets.scaling import CTkScalingBaseClass
+from packaging import version
+
+from vgkit.windows.widgets.utility.utility_functions import check_kwargs_empty, pop_from_dict_by_set
+
 from .widgets.appearance_mode import CTkAppearanceModeBaseClass
-
-from vgkit.windows.widgets.utility.utility_functions import pop_from_dict_by_set, check_kwargs_empty
+from .widgets.scaling import CTkScalingBaseClass
+from .widgets.theme import ThemeManager
 
 
 class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseClass):
@@ -19,16 +19,29 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
     For detailed information check out the documentation.
     """
 
-    _valid_tk_toplevel_arguments: set = {"master", "bd", "borderwidth", "class", "container", "cursor", "height",
-                                         "highlightbackground", "highlightthickness", "menu", "relief",
-                                         "screen", "takefocus", "use", "visual", "width"}
+    _valid_tk_toplevel_arguments: set = {
+        "master",
+        "bd",
+        "borderwidth",
+        "class",
+        "container",
+        "cursor",
+        "height",
+        "highlightbackground",
+        "highlightthickness",
+        "menu",
+        "relief",
+        "screen",
+        "takefocus",
+        "use",
+        "visual",
+        "width",
+    }
 
     _deactivate_macos_window_header_manipulation: bool = False
     _deactivate_windows_window_header_manipulation: bool = False
 
-    def __init__(self, *args,
-                 fg_color: Optional[Union[str, Tuple[str, str]]] = None,
-                 **kwargs):
+    def __init__(self, *args, fg_color: str | tuple[str, str] | None = None, **kwargs):
 
         self._enable_macos_dark_title_bar()
 
@@ -44,9 +57,13 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         self._min_height: int = 0
         self._max_width: int = 1_000_000
         self._max_height: int = 1_000_000
-        self._last_resizable_args: Union[Tuple[list, dict], None] = None  # (args, kwargs)
+        self._last_resizable_args: tuple[list, dict] | None = None  # (args, kwargs)
 
-        self._fg_color = ThemeManager.theme["CTkToplevel"]["fg_color"] if fg_color is None else self._check_color_type(fg_color)
+        self._fg_color = (
+            ThemeManager.theme["CTkToplevel"]["fg_color"]
+            if fg_color is None
+            else self._check_color_type(fg_color)
+        )
 
         # set bg color of tkinter.Toplevel
         super().configure(bg=self._apply_appearance_mode(self._fg_color))
@@ -58,8 +75,12 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         self._iconbitmap_method_called = True
         self._state_before_windows_set_titlebar_color = None
         self._windows_set_titlebar_color_called = False  # indicates if windows_set_titlebar_color was called, stays True until revert_withdraw_after_windows_set_titlebar_color is called
-        self._withdraw_called_after_windows_set_titlebar_color = False  # indicates if withdraw() was called after windows_set_titlebar_color
-        self._iconify_called_after_windows_set_titlebar_color = False  # indicates if iconify() was called after windows_set_titlebar_color
+        self._withdraw_called_after_windows_set_titlebar_color = (
+            False  # indicates if withdraw() was called after windows_set_titlebar_color
+        )
+        self._iconify_called_after_windows_set_titlebar_color = (
+            False  # indicates if iconify() was called after windows_set_titlebar_color
+        )
         self._block_update_dimensions_event = False
 
         # save focus before calling withdraw
@@ -69,8 +90,8 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         if sys.platform.startswith("win"):
             self._windows_set_titlebar_color(self._get_appearance_mode())
 
-        self.bind('<Configure>', self._update_dimensions_event)
-        self.bind('<FocusIn>', self._focus_in_event)
+        self.bind("<Configure>", self._update_dimensions_event)
+        self.bind("<FocusIn>", self._focus_in_event)
 
     def destroy(self):
         self._disable_macos_dark_title_bar()
@@ -90,21 +111,37 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
             detected_width = self.winfo_width()  # detect current window size
             detected_height = self.winfo_height()
 
-            if self._current_width != self._reverse_window_scaling(detected_width) or self._current_height != self._reverse_window_scaling(detected_height):
-                self._current_width = self._reverse_window_scaling(detected_width)  # adjust current size according to new size given by event
-                self._current_height = self._reverse_window_scaling(detected_height)  # _current_width and _current_height are independent of the scale
+            if self._current_width != self._reverse_window_scaling(
+                detected_width
+            ) or self._current_height != self._reverse_window_scaling(detected_height):
+                self._current_width = self._reverse_window_scaling(
+                    detected_width
+                )  # adjust current size according to new size given by event
+                self._current_height = self._reverse_window_scaling(
+                    detected_height
+                )  # _current_width and _current_height are independent of the scale
 
     def _set_scaling(self, new_widget_scaling, new_window_scaling):
         super()._set_scaling(new_widget_scaling, new_window_scaling)
 
         # Force new dimensions on window by using min, max, and geometry. Without min, max it won't work.
-        super().minsize(self._apply_window_scaling(self._current_width), self._apply_window_scaling(self._current_height))
-        super().maxsize(self._apply_window_scaling(self._current_width), self._apply_window_scaling(self._current_height))
+        super().minsize(
+            self._apply_window_scaling(self._current_width),
+            self._apply_window_scaling(self._current_height),
+        )
+        super().maxsize(
+            self._apply_window_scaling(self._current_width),
+            self._apply_window_scaling(self._current_height),
+        )
 
-        super().geometry(f"{self._apply_window_scaling(self._current_width)}x{self._apply_window_scaling(self._current_height)}")
+        super().geometry(
+            f"{self._apply_window_scaling(self._current_width)}x{self._apply_window_scaling(self._current_height)}"
+        )
 
         # set new scaled min and max with delay (delay prevents weird bug where window dimensions snap to unscaled dimensions when mouse releases window)
-        self.after(1000, self._set_scaled_min_max)  # Why 1000ms delay? Experience! (Everything tested on Windows 11)
+        self.after(
+            1000, self._set_scaled_min_max
+        )  # Why 1000ms delay? Experience! (Everything tested on Windows 11)
 
     def block_update_dimensions_event(self):
         self._block_update_dimensions_event = True
@@ -114,9 +151,15 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
 
     def _set_scaled_min_max(self):
         if self._min_width is not None or self._min_height is not None:
-            super().minsize(self._apply_window_scaling(self._min_width), self._apply_window_scaling(self._min_height))
+            super().minsize(
+                self._apply_window_scaling(self._min_width),
+                self._apply_window_scaling(self._min_height),
+            )
         if self._max_width is not None or self._max_height is not None:
-            super().maxsize(self._apply_window_scaling(self._max_width), self._apply_window_scaling(self._max_height))
+            super().maxsize(
+                self._apply_window_scaling(self._max_width),
+                self._apply_window_scaling(self._max_height),
+            )
 
     def geometry(self, geometry_string: str = None):
         if geometry_string is not None:
@@ -125,7 +168,9 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
             # update width and height attributes
             width, height, x, y = self._parse_geometry_string(geometry_string)
             if width is not None and height is not None:
-                self._current_width = max(self._min_width, min(width, self._max_width))  # bound value between min and max
+                self._current_width = max(
+                    self._min_width, min(width, self._max_width)
+                )  # bound value between min and max
                 self._current_height = max(self._min_height, min(height, self._max_height))
         else:
             return self._reverse_geometry_scaling(super().geometry())
@@ -156,7 +201,10 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
             self._current_width = width
         if self._current_height < height:
             self._current_height = height
-        super().minsize(self._apply_window_scaling(self._min_width), self._apply_window_scaling(self._min_height))
+        super().minsize(
+            self._apply_window_scaling(self._min_width),
+            self._apply_window_scaling(self._min_height),
+        )
 
     def maxsize(self, width=None, height=None):
         self._max_width = width
@@ -165,7 +213,10 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
             self._current_width = width
         if self._current_height > height:
             self._current_height = height
-        super().maxsize(self._apply_window_scaling(self._max_width), self._apply_window_scaling(self._max_height))
+        super().maxsize(
+            self._apply_window_scaling(self._max_width),
+            self._apply_window_scaling(self._max_height),
+        )
 
     def configure(self, **kwargs):
         if "fg_color" in kwargs:
@@ -193,16 +244,24 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
 
     @classmethod
     def _enable_macos_dark_title_bar(cls):
-        if sys.platform == "darwin" and not cls._deactivate_macos_window_header_manipulation:  # macOS
+        if (
+            sys.platform == "darwin" and not cls._deactivate_macos_window_header_manipulation
+        ):  # macOS
             if version.parse(platform.python_version()) < version.parse("3.10"):
-                if version.parse(tkinter.Tcl().call("info", "patchlevel")) >= version.parse("8.6.9"):  # Tcl/Tk >= 8.6.9
+                if version.parse(tkinter.Tcl().call("info", "patchlevel")) >= version.parse(
+                    "8.6.9"
+                ):  # Tcl/Tk >= 8.6.9
                     os.system("defaults write -g NSRequiresAquaSystemAppearance -bool No")
 
     @classmethod
     def _disable_macos_dark_title_bar(cls):
-        if sys.platform == "darwin" and not cls._deactivate_macos_window_header_manipulation:  # macOS
+        if (
+            sys.platform == "darwin" and not cls._deactivate_macos_window_header_manipulation
+        ):  # macOS
             if version.parse(platform.python_version()) < version.parse("3.10"):
-                if version.parse(tkinter.Tcl().call("info", "patchlevel")) >= version.parse("8.6.9"):  # Tcl/Tk >= 8.6.9
+                if version.parse(tkinter.Tcl().call("info", "patchlevel")) >= version.parse(
+                    "8.6.9"
+                ):  # Tcl/Tk >= 8.6.9
                     os.system("defaults delete -g NSRequiresAquaSystemAppearance")
                     # This command reverts the dark-mode setting for all programs.
 
@@ -217,8 +276,10 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/ne-dwmapi-dwmwindowattribute
         """
 
-        if sys.platform.startswith("win") and not self._deactivate_windows_window_header_manipulation:
-
+        if (
+            sys.platform.startswith("win")
+            and not self._deactivate_windows_window_header_manipulation
+        ):
             self._state_before_windows_set_titlebar_color = self.state()
             self.focused_widget_before_widthdraw = self.focus_get()
             super().withdraw()  # hide window so that it can be redrawn after the titlebar change so that the color change is visible
@@ -237,13 +298,22 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
                 DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19
 
                 # try with DWMWA_USE_IMMERSIVE_DARK_MODE
-                if ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE,
-                                                              ctypes.byref(ctypes.c_int(value)),
-                                                              ctypes.sizeof(ctypes.c_int(value))) != 0:
+                if (
+                    ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                        hwnd,
+                        DWMWA_USE_IMMERSIVE_DARK_MODE,
+                        ctypes.byref(ctypes.c_int(value)),
+                        ctypes.sizeof(ctypes.c_int(value)),
+                    )
+                    != 0
+                ):
                     # try with DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20h1
-                    ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1,
-                                                               ctypes.byref(ctypes.c_int(value)),
-                                                               ctypes.sizeof(ctypes.c_int(value)))
+                    ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                        hwnd,
+                        DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1,
+                        ctypes.byref(ctypes.c_int(value)),
+                        ctypes.sizeof(ctypes.c_int(value)),
+                    )
 
             except Exception as err:
                 print(err)
@@ -256,9 +326,8 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
                 self.focused_widget_before_widthdraw = None
 
     def _revert_withdraw_after_windows_set_titlebar_color(self):
-        """ if in a short time (5ms) after """
+        """if in a short time (5ms) after"""
         if self._windows_set_titlebar_color_called:
-
             if self._withdraw_called_after_windows_set_titlebar_color:
                 pass  # leave it withdrawed
             elif self._iconify_called_after_windows_set_titlebar_color:
@@ -284,6 +353,3 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
             self._windows_set_titlebar_color(mode_string)
 
         super().configure(bg=self._apply_appearance_mode(self._fg_color))
-
-
-
