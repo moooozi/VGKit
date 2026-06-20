@@ -5,7 +5,6 @@ from typing import Any
 from .core_rendering import CTkCanvas, DrawEngine
 from .core_widget_classes import CTkBaseClass
 from .font import CTkFont
-from .image import CTkImage
 from .theme import ThemeManager
 from .utility import check_kwargs_empty, pop_from_dict_by_set
 
@@ -42,7 +41,6 @@ class CTkLabel(CTkBaseClass):
         text_color_disabled: str | tuple[str, str] | None = None,
         text: str = "CTkLabel",
         font: tuple | CTkFont | None = None,
-        image: CTkImage | None = None,
         compound: str = "center",
         anchor: str = "center",  # label anchor: center, n, e, s, w
         wraplength: int = 0,
@@ -84,12 +82,7 @@ class CTkLabel(CTkBaseClass):
         self._text = text
         self._wraplength = wraplength
 
-        # image
-        self._image = self._check_image_type(image)
         self._compound = compound
-        if isinstance(self._image, CTkImage):
-            self._image.add_configure_callback(self._update_image)
-
         # font
         self._font = CTkFont() if font is None else self._check_font_type(font)
         if isinstance(self._font, CTkFont):
@@ -125,7 +118,6 @@ class CTkLabel(CTkBaseClass):
         check_kwargs_empty(kwargs, raise_error=True)
 
         self._create_grid()
-        self._update_image()
         self._draw()
 
     def _set_scaling(self, *args, **kwargs):
@@ -139,12 +131,10 @@ class CTkLabel(CTkBaseClass):
         self._label.configure(wraplength=self._apply_widget_scaling(self._wraplength))
 
         self._create_grid()
-        self._update_image()
         self._draw(no_color_updates=True)
 
     def _set_appearance_mode(self, mode_string):
         super()._set_appearance_mode(mode_string)
-        self._update_image()
 
     def _set_dimensions(self, width=None, height=None):
         super()._set_dimensions(width, height)
@@ -164,16 +154,6 @@ class CTkLabel(CTkBaseClass):
         # Otherwise grid will lag and only resizes if other mouse action occurs.
         self._canvas.grid_forget()
         self._canvas.grid(row=0, column=0, sticky="nswe")
-
-    def _update_image(self):
-        if isinstance(self._image, CTkImage):
-            self._label.configure(
-                image=self._image.create_scaled_photo_image(
-                    self._get_widget_scaling(), self._get_appearance_mode()
-                )
-            )
-        elif self._image is not None:
-            self._label.configure(image=self._image)
 
     def destroy(self):
         if isinstance(self._font, CTkFont):
@@ -261,14 +241,6 @@ class CTkLabel(CTkBaseClass):
                 self._font.add_size_configure_callback(self._update_font)
             self._update_font()
 
-        if "image" in kwargs:
-            if isinstance(self._image, CTkImage):
-                self._image.remove_configure_callback(self._update_image)
-            self._image = self._check_image_type(kwargs.pop("image"))
-            if isinstance(self._image, CTkImage):
-                self._image.add_configure_callback(self._update_image)
-            self._update_image()
-
         if "compound" in kwargs:
             self._compound = kwargs.pop("compound")
             self._label.configure(compound=self._compound)
@@ -302,8 +274,6 @@ class CTkLabel(CTkBaseClass):
             return self._text
         elif attribute_name == "font":
             return self._font
-        elif attribute_name == "image":
-            return self._image
         elif attribute_name == "compound":
             return self._compound
         elif attribute_name == "anchor":

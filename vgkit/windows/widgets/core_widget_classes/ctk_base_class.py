@@ -12,7 +12,6 @@ except ImportError:
 from .... import windows  # import windows for isinstance checks
 from ..appearance_mode import CTkAppearanceModeBaseClass
 from ..font import CTkFont
-from ..image import CTkImage
 from ..scaling import CTkScalingBaseClass
 from ..theme import ThemeManager
 from ..utility import check_kwargs_empty, pop_from_dict_by_set
@@ -204,18 +203,6 @@ class CTkBaseClass(tkinter.Frame, CTkAppearanceModeBaseClass, CTkScalingBaseClas
                 + "font=vgkit.CTkFont(family='<name>', size=<size in px>)\n"
                 + "font=('<name>', <size in px>)\n"
             )
-
-    def _check_image_type(self, image: any):
-        """check image type when passed to widget"""
-        if image is None:
-            return image
-        elif isinstance(image, CTkImage):
-            return image
-        else:
-            warnings.warn(
-                f"{type(self).__name__} Warning: Given image is not CTkImage but {type(image)}. Image can not be scaled on HighDPI displays, use CTkImage instead.\n"
-            )
-            return image
 
     def _update_dimensions_event(self, event):
         # only redraw if dimensions changed (for performance), independent of scaling

@@ -41,8 +41,6 @@ from .windows.widgets.core_widget_classes import CTkBaseClass
 from .windows.widgets.font import CTkFont as Font
 from .windows.widgets.font import FontManager
 
-# import image classes
-from .windows.widgets.image import CTkImage as Image
 from .windows.widgets.scaling import ScalingTracker
 from .windows.widgets.theme import ThemeManager
 
@@ -80,7 +78,6 @@ __all__ = [
     "Toplevel",
     "InputDialog",
     "Font",
-    "Image",
     "CTkCanvas",
     "CTkBaseClass",
     "set_appearance_mode",
