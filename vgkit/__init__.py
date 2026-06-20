@@ -1,4 +1,4 @@
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 import tkinter.filedialog as filedialog
 from tkinter import BooleanVar, DoubleVar, IntVar, StringVar, Variable

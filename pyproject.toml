@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "vgkit"
-version = "0.1.1"
+version = "0.1.2"
 description = "Create modern looking GUIs with Python"
 readme = "Readme.md"
 license = "MIT"
@@ -67,7 +67,7 @@ ignore = [
 github_url = "https://github.com/moooozi/vgkit"
 
 [tool.tbump.version]
-current = "0.1.1"
+current = "0.1.2"
 regex = '''
   (?P<major>\d+)
   \.
