@@ -40,7 +40,6 @@ from .windows.widgets.core_widget_classes import CTkBaseClass
 # import font classes
 from .windows.widgets.font import CTkFont as Font
 from .windows.widgets.font import FontManager
-
 from .windows.widgets.scaling import ScalingTracker
 from .windows.widgets.theme import ThemeManager
 
